@@ -6,4 +6,5 @@ sealed class UIEvents {
     data class PasswordChange(val password :String) :UIEvents()
     data class ConfirmPasswordChange(val confirmPassword :String) :UIEvents()
 
+    object RegisterButtonClicked : UIEvents()
 }

@@ -291,6 +291,8 @@ fun signUp(
             ),
             modifier = Modifier.width(261.dp),
             onClick = {
+                loginViewModel.onEvent(UIEvents.RegisterButtonClicked)
+
                 isPasswordSame = password != confirmPassword
                 if (!isPasswordSame) {
                     navController.navigate(Screens.homeScreen)
