@@ -80,7 +80,7 @@ fun MyTextFieldComponent(
         maxLines = 1,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         leadingIcon = {
-            Icon(
+            Icon(modifier = Modifier.size(20.dp),
                 painter = painterResource,
                 contentDescription = "",
                 tint = Color(0xFF6368D9)
@@ -133,7 +133,7 @@ fun passwordMyTextFieldComponent(
         singleLine = true,
         maxLines = 1,
         leadingIcon = {
-            Icon(
+            Icon(modifier = Modifier.size(20.dp),
                 painter = painterResource,
                 contentDescription = "",
                 tint = Color(0xFF6368D9)
@@ -141,9 +141,9 @@ fun passwordMyTextFieldComponent(
         },
         trailingIcon = {
             val iconImage = if (passwordVisible.value) {
-                R.drawable.open_eyes
+                R.drawable.see
             } else {
-                R.drawable.close_eye
+                R.drawable.hide
             }
             var description = if (passwordVisible.value) {
                 "Hide password"
@@ -151,7 +151,7 @@ fun passwordMyTextFieldComponent(
                 "Show Password"
             }
             IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                Icon(
+                Icon(modifier = Modifier.size(20.dp),
                     painter = painterResource(id = iconImage),
                     contentDescription = description,
                     tint = Color(0xFF6368D9)

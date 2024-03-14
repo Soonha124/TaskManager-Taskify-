@@ -48,14 +48,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.taskify.database.UserRepository
 import com.example.taskify.ui.theme.components.CategoryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun homeScreen(navController: NavController) {
+fun homeScreen(navController: NavController, userRepository: UserRepository) {
     var navNum by remember {
         mutableStateOf(0)
     }
+    val username = userRepository.getUserName()
     Scaffold(
         modifier = Modifier.padding(
             top = 10.dp,
@@ -67,26 +69,30 @@ fun homeScreen(navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.padding(all = 10.dp)
+                        .clickable(onClick = {
+                            navController.navigate(Screens.profile)
+                        })
                 )
                 {
-                    Box(
-                        modifier = Modifier
-                            .height(50.dp)
-                            .shadow(
-                                elevation = 10.dp,
-                                shape = RoundedCornerShape(20.dp)
-                            )
+                    Box(modifier = Modifier
+                            .height(30.dp)
+
                     ) {
-                        Image(
-                            painter = painterResource(
-                                id = R.drawable.ic_launcher_background
-                            ),
-                            contentDescription = "",
-                            colorFilter = ColorFilter.tint(Color.Blue)
+                        Image(painter = painterResource(
+                            id =R.drawable.userprofile ) ,
+                            contentDescription ="" ,
+                            colorFilter = ColorFilter.tint(Color(0xFF6368D9))
+                            , modifier = Modifier
+                                .background(
+                                    shape =
+                                    RoundedCornerShape(40.dp),
+                                    color = Color.Transparent
+                                )
+                                .align(Alignment.TopStart)
                         )
                     }
                     Text(
-                        text = "Soonha",
+                        text = username,
                         style = TextStyle(
                             fontSize = 30.sp,
                             fontWeight = FontWeight(700),
@@ -250,5 +256,5 @@ fun homeScreen(navController: NavController) {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun previewHomeScreen() {
-    homeScreen(rememberNavController())
+//    homeScreen(rememberNavController())
 }

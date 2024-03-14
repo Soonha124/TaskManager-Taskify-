@@ -1,11 +1,13 @@
 package com.example.taskify.database
 
 import android.content.ContentValues
-import android.provider.BaseColumns
+import android.content.Context
+import android.content.SharedPreferences
 
-class UserRepository(private val dbHelper: UserDbHelper) {
+class UserRepository(private val context: Context,private val dbHelper: UserDbHelper) {
     fun registerUser(username:String, email:String, password:String): Boolean
     {
+
         val db = dbHelper.writableDatabase
 
         val values = ContentValues().apply {
@@ -41,5 +43,18 @@ class UserRepository(private val dbHelper: UserDbHelper) {
         cursor.close()
         db.close()
         return success
+    }
+
+    fun saveUserName(username: String){
+
+        val sharedPreferences :SharedPreferences = context.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putString("username", username)
+        editor.apply()
+    }
+
+    fun getUserName():String{
+        val sharedPreferences:SharedPreferences = context.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("username", "") ?: ""
     }
 }

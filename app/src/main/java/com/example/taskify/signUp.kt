@@ -1,5 +1,6 @@
 package com.example.taskify
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,12 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.taskify.database.UserRepository
 import com.example.taskify.ui.theme.components.ButtonComponent
 import com.example.taskify.ui.theme.components.ClickableLoginTextComponent
 import com.example.taskify.ui.theme.components.MyTextFieldComponent
 import com.example.taskify.ui.theme.components.passwordMyTextFieldComponent
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun signUp(
     navController: NavHostController,
@@ -70,7 +73,7 @@ fun signUp(
         {
            MyTextFieldComponent(
                labelValue = "UserName",
-               painterResource = painterResource(id = R.drawable.clock),
+               painterResource = painterResource(id = R.drawable.userprofile),
                onTextSelected = {
                                 username = it
                    checkFieldsFilled(username,email, password)
@@ -79,7 +82,7 @@ fun signUp(
 
            MyTextFieldComponent(
                labelValue = "Email",
-               painterResource = painterResource(id = R.drawable.clock),
+               painterResource = painterResource(id = R.drawable.emailinbox),
                onTextSelected = {
                 email = it
                    checkFieldsFilled(username,email, password)
@@ -88,7 +91,7 @@ fun signUp(
            )
            passwordMyTextFieldComponent(
                labelValue = "Password",
-               painterResource = painterResource(id = R.drawable.clock) ,
+               painterResource = painterResource(id = R.drawable.password) ,
                onTextSelected = {
                    password = it
                    checkFieldsFilled(username,email, password)
@@ -97,7 +100,7 @@ fun signUp(
            )
            passwordMyTextFieldComponent(
                labelValue = "Confirm Password",
-               painterResource = painterResource(id = R.drawable.clock),
+               painterResource = painterResource(id = R.drawable.password),
                onTextSelected = {
                                 confirmPassword = it
                    checkFieldsFilled(username,email, password)
@@ -114,6 +117,7 @@ fun signUp(
                                   if (registered)
                                   {
                                       registrationSuccess = true
+                                      userRepository.saveUserName(username)
                                   } else {
 
                                   }
@@ -147,5 +151,5 @@ fun checkFieldsFilled(username: String, email: String, password: String): Boolea
 @Composable
 fun previewSignUp() {
 //    signUp(rememberNavController(),
-//        userRepository = userRepository)
+//        userRepository )
 }

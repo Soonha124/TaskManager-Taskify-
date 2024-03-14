@@ -1,11 +1,13 @@
 package com.example.taskify.database
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
 
 class UserDbHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,null, DATABASE_VERSION) {
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(db: SQLiteDatabase) {
         val User_ENTRIES = "CREATE TABLE ${UserContract.UserEntry.TABLE_NAME} (" +
                  "${UserContract.UserEntry.COLUMN_USERNAME} TEXT," +

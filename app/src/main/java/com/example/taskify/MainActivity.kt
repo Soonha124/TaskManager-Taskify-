@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 )
                 {
-                    AppNavigation()
+                    AppNavigation(context = applicationContext)
                 }
             }
         }

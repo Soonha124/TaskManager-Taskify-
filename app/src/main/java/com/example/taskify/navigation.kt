@@ -1,5 +1,6 @@
 package com.example.taskify
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
@@ -29,9 +30,10 @@ object Screens
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavigation(){
+fun AppNavigation(context: Context){
     val navController = rememberNavController()
-    val userRepository = UserRepository(UserDbHelper(LocalContext.current))
+    val userRepository = UserRepository(context = LocalContext.current,
+        UserDbHelper(context))
 
     NavHost(navController = navController,
         startDestination = Screens.splashScreen)
@@ -47,11 +49,6 @@ fun AppNavigation(){
                 navController = navController, userRepository = userRepository
             )
         }
-//        signUp(
-//            navController = navController.navigateToSingleTop(
-//                Screens.signUp
-//            )
-//        )
         composable(Screens.loginScreen)
         {
             loginScreen(
@@ -60,7 +57,8 @@ fun AppNavigation(){
 
         composable(Screens.homeScreen)
         {
-            homeScreen(navController = navController)
+            homeScreen(navController = navController,
+                userRepository)
         }
 
         composable(Screens.createTask)
@@ -75,7 +73,8 @@ fun AppNavigation(){
 
         composable(Screens.profile)
         {
-            profile(navController = navController)
+            profile(navController = navController,
+                userRepository = userRepository)
         }
 
         composable(Screens.notification)
@@ -94,16 +93,5 @@ fun AppNavigation(){
         composable(Screens.otherCategory){
             otherCategory(navController = navController)
         }
-    }
-}
-
-fun NavController.navigateToSingleTop(route:String){
-    navigate(route){
-        popUpTo(graph.findStartDestination().id){
-            saveState = true
-        }
-
-        launchSingleTop = true
-        restoreState = true
     }
 }

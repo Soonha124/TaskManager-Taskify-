@@ -63,9 +63,6 @@ fun loginScreen(navController: NavController, userRepository: UserRepository){
     var (checked, onCheckedChange) = rememberSaveable{
         mutableStateOf(false)
     }
-    var passwordVisible = remember {
-        mutableStateOf(false)
-    }
     val context  = LocalContext.current
 
     val isFieldsEmpty =  email.isNotEmpty() &&
@@ -101,19 +98,19 @@ fun loginScreen(navController: NavController, userRepository: UserRepository){
 
             MyTextFieldComponent(
                 labelValue = "UserName",
-                painterResource = painterResource(id = R.drawable.clock),
+                painterResource = painterResource(id = R.drawable.userprofile),
                 onTextSelected = {
                     userName = it
                 })
             MyTextFieldComponent(
                 labelValue = "Email",
-                painterResource = painterResource(id = R.drawable.clock),
+                painterResource = painterResource(id = R.drawable.emailinbox),
                 onTextSelected = {
                     email = it
                 })
             passwordMyTextFieldComponent(
                 labelValue = "Password",
-                painterResource = painterResource(id = R.drawable.clock),
+                painterResource = painterResource(id = R.drawable.password),
                 onTextSelected = {
                     password = it
                 })
@@ -146,6 +143,7 @@ fun loginScreen(navController: NavController, userRepository: UserRepository){
                     val loggedIn = userRepository.loginUser(userName,email,password,)
                     if (loggedIn){
                         loginSuccess = true
+                        userRepository.saveUserName(userName)
                         Toast.makeText(context,"Welcome Again",
                             Toast.LENGTH_LONG).show()
                     }
