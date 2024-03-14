@@ -1,6 +1,8 @@
 package com.example.taskify.ui.theme.components
 
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,41 +16,251 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.InputChip
-import androidx.compose.material3.InputChipDefaults
-import androidx.compose.material3.SelectableChipElevation
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskify.R
 
 @Composable
-fun bottomNavigationIcons(iconButton: ()-> Unit){
-    IconButton(onClick = { /*TODO*/ }) {
+fun MyTextFieldComponent(
+    labelValue:String, painterResource: Painter,
+    onTextSelected: (String) -> Unit,
+){
+    var textValue = rememberSaveable {
+        mutableStateOf("")
+    }
+    OutlinedTextField(
+        modifier = Modifier
+            .background(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(10.dp)
+            ),
+        value = textValue.value,
+        label = { Text(text = labelValue) },
+        onValueChange = {
+            textValue.value = it
+            onTextSelected(it)
+//            loginViewModel.onEvent(UIEvents.UserNameChange(it))
+        },
+        singleLine = true,
+        maxLines = 1,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+        leadingIcon = {
+            Icon(
+                painter = painterResource,
+                contentDescription = "",
+                tint = Color(0xFF6368D9)
+            )
+        }
+    )
+}
+@SuppressLint("SuspiciousIndentation")
+@Composable
+fun passwordMyTextFieldComponent(
+    labelValue:String, painterResource: Painter,
+    onTextSelected: (String) -> Unit
+){
+    val localFocusManager = LocalFocusManager.current
+    
+    var password = rememberSaveable {
+        mutableStateOf("")
+    }
+    var passwordVisible = remember {
+        mutableStateOf(false)
+    }
+    OutlinedTextField(
+        modifier = Modifier
+            .background(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .border(
+                BorderStroke(
+                    2.dp,
+                    color = Color(0xFF6368D9)
+                ),
+                shape = RoundedCornerShape(5.dp)
+            ),
+        value = password.value,
+        label = {
+            Text(text = labelValue)
+        },
+        onValueChange = {
+        password.value = it
+            onTextSelected(it)
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions {
+            localFocusManager.clearFocus()
+        },
+        singleLine = true,
+        maxLines = 1,
+        leadingIcon = {
+            Icon(
+                painter = painterResource,
+                contentDescription = "",
+                tint = Color(0xFF6368D9)
+            )
+        },
+        trailingIcon = {
+            val iconImage = if (passwordVisible.value) {
+                R.drawable.open_eyes
+            } else {
+                R.drawable.close_eye
+            }
+            var description = if (passwordVisible.value) {
+                "Hide password"
+            } else {
+                "Show Password"
+            }
+            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+                Icon(
+                    painter = painterResource(id = iconImage),
+                    contentDescription = description,
+                    tint = Color(0xFF6368D9)
+                )
+            }
+        },
+        visualTransformation =
+        if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+    )
+}
+@Composable
+fun passwordConfirmMyTextFieldComponent(
+    labelValue:String, painterResource: Painter,
+    onTextSelected: (String) -> Unit,
+){
+    val localFocusManager = LocalFocusManager.current
+
+    var confirmPassword = rememberSaveable {
+        mutableStateOf("")
+    }
+    var confirmPasswordVisible = remember {
+        mutableStateOf(false)
+    }
+    OutlinedTextField(
+//        isError = loginViewModel.registrationUIState.value.confirmPasswordError,
+
+        modifier = Modifier
+            .background(
+                color = Color.Transparent,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .border(
+                BorderStroke(
+                    2.dp,
+                    color = Color(0xFF6368D9)
+                ),
+                shape = RoundedCornerShape(5.dp)
+            ),
+        value = confirmPassword.value,
+        label = {
+            Text(text = labelValue)
+        },
+        onValueChange = {
+            confirmPassword.value = it
+            onTextSelected(it)
+        },
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions {
+            localFocusManager.clearFocus()
+        },
+        singleLine = true,
+        maxLines = 1,
+        leadingIcon = {
+            Icon(
+                painter = painterResource,
+                contentDescription = "",
+                tint = Color(0xFF6368D9)
+            )
+        },
+        trailingIcon = {
+            val iconImage = if (confirmPasswordVisible.value) {
+                R.drawable.open_eyes
+            } else {
+                R.drawable.close_eye
+            }
+            var description = if (confirmPasswordVisible.value) {
+                "Hide password"
+            } else {
+                "Show Password"
+            }
+            IconButton(onClick = {
+                confirmPassword.value == confirmPassword.value }) {
+                Icon(
+                    painter = painterResource(id = iconImage),
+                    contentDescription = description,
+                    tint = Color(0xFF6368D9)
+                )
+            }
+        },
+        visualTransformation =
+        if (confirmPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+    )
+}
+@Composable
+fun ButtonComponent(value: String, onButtonClicked:()-> Unit, isEnabled : Boolean = false){
+    Button(
+        modifier = Modifier.width(261.dp),
+        colors = ButtonDefaults.buttonColors(
+            Color(0xFF6368D9)
+        ),
+        onClick = {
+        onButtonClicked.invoke()
+        },
+        enabled = isEnabled
+    )
+    {
+        Text(
+            text = "Register",
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight(600),
+                textAlign = TextAlign.Center,
+                letterSpacing = 0.32.sp,
+                color = Color.White
+            )
+        )
     }
 }
 @Composable

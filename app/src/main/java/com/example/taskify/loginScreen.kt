@@ -23,9 +23,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,20 +46,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.taskify.database.UserRepository
 import com.example.taskify.ui.theme.components.ClickableLoginTextComponent
+import com.example.taskify.ui.theme.components.MyTextFieldComponent
+import com.example.taskify.ui.theme.components.passwordMyTextFieldComponent
 
 
 @Composable
-fun loginScreen(navController: NavController){
-    var (userName, setuserName) = rememberSaveable {
+fun loginScreen(navController: NavController, userRepository: UserRepository){
+    var userName by remember {
         mutableStateOf("")
     }
-    var (email, setEmail) = rememberSaveable {
-        mutableStateOf("")
-    }
-    var (password, setPassword) = rememberSaveable {
-        mutableStateOf("")
-    }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var loginSuccess by remember { mutableStateOf(false) }
     var (checked, onCheckedChange) = rememberSaveable{
         mutableStateOf(false)
     }
@@ -66,8 +68,7 @@ fun loginScreen(navController: NavController){
     }
     val context  = LocalContext.current
 
-    val isFieldsEmpty = userName.isNotEmpty()
-            && email.isNotEmpty() &&
+    val isFieldsEmpty =  email.isNotEmpty() &&
             email.endsWith("@gmail.com")
             && password.isNotEmpty()
             && checked.and(true)
@@ -97,79 +98,25 @@ fun loginScreen(navController: NavController){
         Column(horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp))
         {
-            OutlinedTextField(modifier = Modifier
-                .background(color = Color.Transparent,
-                    shape = RoundedCornerShape(10.dp)
-                ),
-                leadingIcon = {
-                              Icon(Icons.Default.Person,
-                                  contentDescription = "",
-                                  tint = Color(0xFF6368D9)
-                              )
-                },
-                label = { Text(text = "UserName")},
-                value = userName,
-                onValueChange = setuserName,
-                singleLine = true,
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next))
 
-            OutlinedTextField(modifier = Modifier
-                .background(color = Color.Transparent,
-                    shape = RoundedCornerShape(10.dp)
-                ),
-                label = { Text(text = "Email")},
-                value = email,
-            onValueChange = setEmail,
-                leadingIcon = {
-                              Icon(Icons.Default.MailOutline,
-                                  contentDescription = "email",
-                                  tint = Color(0xFF6368D9))
-                },
-                singleLine = true,
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next)
-            )
-            OutlinedTextField(
-                modifier = Modifier
-                .background(color = Color.Transparent,
-                    shape = RoundedCornerShape(10.dp)),
-                leadingIcon = {
-                              Icon(Icons.Default.Lock,
-                                  contentDescription = "",
-                                  tint = Color(0xFF6368D9)) },
-                value = password,
-                label = {
-                    Text(text = "Password")
-                        },
-                onValueChange = setPassword,
-                singleLine = true,
-                maxLines = 1,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done),
-                trailingIcon = {
-                    val iconImage = if (passwordVisible.value) {
-                        R.drawable.open_eyes
-                    } else {
-                        R.drawable.close_eye
-                    }
-                    var description = if (passwordVisible.value) {
-                        "Hide password"
-                    } else {
-                        "Show Password"
-                    }
-                    IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                        Icon(painter = painterResource(id = iconImage),
-                            contentDescription = description,
-                            tint = Color(0xFF6368D9))
-                    }
-                },
-                visualTransformation =
-                if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-
-                )
+            MyTextFieldComponent(
+                labelValue = "UserName",
+                painterResource = painterResource(id = R.drawable.clock),
+                onTextSelected = {
+                    userName = it
+                })
+            MyTextFieldComponent(
+                labelValue = "Email",
+                painterResource = painterResource(id = R.drawable.clock),
+                onTextSelected = {
+                    email = it
+                })
+            passwordMyTextFieldComponent(
+                labelValue = "Password",
+                painterResource = painterResource(id = R.drawable.clock),
+                onTextSelected = {
+                    password = it
+                })
 
     Row(verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(1.dp)) {
@@ -192,13 +139,21 @@ fun loginScreen(navController: NavController){
             UnderLinedTextComponent(value = "Forgot Password ?")
 
             Button(
-                enabled = isFieldsEmpty,
+                enabled = checkFieldsFilled(userName, email, password),
                 colors = ButtonDefaults.buttonColors(Color(0xFF6368D9)),
                 modifier = Modifier.width(261.dp),
                 onClick = {
-                    navController.navigate("homeScreen")
-                    Toast.makeText(context,"Welcom to Taskify ",
-                        Toast.LENGTH_LONG).show()
+                    val loggedIn = userRepository.loginUser(userName,email,password,)
+                    if (loggedIn){
+                        loginSuccess = true
+                        Toast.makeText(context,"Welcome Again",
+                            Toast.LENGTH_LONG).show()
+                    }
+                    else{
+                        Toast.makeText(context,"try Again", Toast.LENGTH_LONG).show()
+
+                    }
+
                 }) {
                 Text(
                     text = "Log in",
@@ -210,6 +165,9 @@ fun loginScreen(navController: NavController){
                         letterSpacing = 0.32.sp,
                     )
                 )
+            }
+            if (loginSuccess){
+                navController.navigate(Screens.homeScreen)
             }
             ClickableLoginTextComponent(tryingToLogin = false,
                 onTextSelected = {
@@ -239,5 +197,5 @@ fun UnderLinedTextComponent(value:String){
 @Preview
 @Composable
 fun previewLoginScreen(){
-    loginScreen(rememberNavController())
+//    loginScreen(rememberNavController())
 }

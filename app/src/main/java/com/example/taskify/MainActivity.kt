@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.taskify.ui.theme.TaskifyTheme
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -30,5 +31,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 

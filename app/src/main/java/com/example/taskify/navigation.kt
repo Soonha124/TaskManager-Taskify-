@@ -1,11 +1,16 @@
 package com.example.taskify
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.taskify.database.UserDbHelper
+import com.example.taskify.database.UserRepository
 
 object Screens
 {
@@ -22,9 +27,11 @@ object Screens
     const val otherCategory = "otherCategory"
 
 }
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
+    val userRepository = UserRepository(UserDbHelper(LocalContext.current))
 
     NavHost(navController = navController,
         startDestination = Screens.splashScreen)
@@ -37,7 +44,8 @@ fun AppNavigation(){
         composable(Screens.signUp)
         {
             signUp(
-                navController = navController)
+                navController = navController, userRepository = userRepository
+            )
         }
 //        signUp(
 //            navController = navController.navigateToSingleTop(
@@ -47,7 +55,7 @@ fun AppNavigation(){
         composable(Screens.loginScreen)
         {
             loginScreen(
-                navController = navController)
+                navController = navController, userRepository = userRepository)
         }
 
         composable(Screens.homeScreen)
