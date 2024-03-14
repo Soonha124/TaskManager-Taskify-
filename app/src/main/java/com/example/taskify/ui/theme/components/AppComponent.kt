@@ -36,7 +36,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
@@ -107,13 +110,6 @@ fun passwordMyTextFieldComponent(
             .background(
                 color = Color.Transparent,
                 shape = RoundedCornerShape(10.dp)
-            )
-            .border(
-                BorderStroke(
-                    2.dp,
-                    color = Color(0xFF6368D9)
-                ),
-                shape = RoundedCornerShape(5.dp)
             ),
         value = password.value,
         label = {
@@ -125,10 +121,10 @@ fun passwordMyTextFieldComponent(
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
+            imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions {
-            localFocusManager.clearFocus()
+            localFocusManager.moveFocus(FocusDirection.Down)
         },
         singleLine = true,
         maxLines = 1,
@@ -141,9 +137,9 @@ fun passwordMyTextFieldComponent(
         },
         trailingIcon = {
             val iconImage = if (passwordVisible.value) {
-                R.drawable.see
+                R.drawable.open_eyes
             } else {
-                R.drawable.hide
+                R.drawable.close_eye
             }
             var description = if (passwordVisible.value) {
                 "Hide password"
@@ -163,7 +159,7 @@ fun passwordMyTextFieldComponent(
     )
 }
 @Composable
-fun passwordConfirmMyTextFieldComponent(
+fun confirmPasswordMyTextFieldComponent(
     labelValue:String, painterResource: Painter,
     onTextSelected: (String) -> Unit,
 ){
@@ -176,19 +172,10 @@ fun passwordConfirmMyTextFieldComponent(
         mutableStateOf(false)
     }
     OutlinedTextField(
-//        isError = loginViewModel.registrationUIState.value.confirmPasswordError,
-
         modifier = Modifier
             .background(
                 color = Color.Transparent,
                 shape = RoundedCornerShape(10.dp)
-            )
-            .border(
-                BorderStroke(
-                    2.dp,
-                    color = Color(0xFF6368D9)
-                ),
-                shape = RoundedCornerShape(5.dp)
             ),
         value = confirmPassword.value,
         label = {
@@ -208,7 +195,7 @@ fun passwordConfirmMyTextFieldComponent(
         singleLine = true,
         maxLines = 1,
         leadingIcon = {
-            Icon(
+            Icon(modifier = Modifier.size(20.dp),
                 painter = painterResource,
                 contentDescription = "",
                 tint = Color(0xFF6368D9)
@@ -225,9 +212,8 @@ fun passwordConfirmMyTextFieldComponent(
             } else {
                 "Show Password"
             }
-            IconButton(onClick = {
-                confirmPassword.value == confirmPassword.value }) {
-                Icon(
+            IconButton(onClick = { confirmPasswordVisible.value = !confirmPasswordVisible.value }) {
+                Icon(modifier = Modifier.size(20.dp),
                     painter = painterResource(id = iconImage),
                     contentDescription = description,
                     tint = Color(0xFF6368D9)

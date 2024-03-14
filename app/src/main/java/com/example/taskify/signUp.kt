@@ -28,6 +28,7 @@ import com.example.taskify.database.UserRepository
 import com.example.taskify.ui.theme.components.ButtonComponent
 import com.example.taskify.ui.theme.components.ClickableLoginTextComponent
 import com.example.taskify.ui.theme.components.MyTextFieldComponent
+import com.example.taskify.ui.theme.components.confirmPasswordMyTextFieldComponent
 import com.example.taskify.ui.theme.components.passwordMyTextFieldComponent
 
 @SuppressLint("SuspiciousIndentation")
@@ -98,7 +99,7 @@ fun signUp(
 
                },
            )
-           passwordMyTextFieldComponent(
+           confirmPasswordMyTextFieldComponent(
                labelValue = "Confirm Password",
                painterResource = painterResource(id = R.drawable.password),
                onTextSelected = {
@@ -113,7 +114,7 @@ fun signUp(
             value = "Register",
             onButtonClicked = {
                               if (password == confirmPassword){
-                                  val registered = userRepository.registerUser(username, email, password )
+                                  val registered = userRepository.registerUser(username, email, password)
                                   if (registered)
                                   {
                                       registrationSuccess = true
