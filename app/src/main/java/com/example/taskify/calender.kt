@@ -38,26 +38,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
-data class Task(
+data class Taskk(
     val category: String,
     val description: String,
     val time: Int,
 )
 
 val taskList = listOf(
-    Task("College Stuff", "Prepare presentaion",  2 ),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("Work", "Prepare presentaion", 3),
-    Task("Gym", "Prepare presentaion", 3),
-    Task("Personal Projects", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
-    Task("University Stuff", "Prepare presentaion", 3),
+    Taskk("College Stuff", "Prepare presentaion",  2 ),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("Work", "Prepare presentaion", 3),
+    Taskk("Gym", "Prepare presentaion", 3),
+    Taskk("Personal Projects", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("University Stuff", "Prepare presentaion", 3),
 
     )
 

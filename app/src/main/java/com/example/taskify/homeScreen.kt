@@ -1,5 +1,7 @@
 package com.example.taskify
 
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -53,7 +55,8 @@ import com.example.taskify.ui.theme.components.CategoryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun homeScreen(navController: NavController, userRepository: UserRepository) {
+fun homeScreen(navController: NavController, userRepository: UserRepository,
+onBackPressedDispatcher: OnBackPressedDispatcher) {
     var navNum by remember {
         mutableStateOf(0)
     }
@@ -68,7 +71,8 @@ fun homeScreen(navController: NavController, userRepository: UserRepository) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier.padding(all = 10.dp)
+                    modifier = Modifier
+                        .padding(all = 10.dp)
                         .clickable(onClick = {
                             navController.navigate(Screens.profile)
                         })
@@ -251,7 +255,9 @@ fun homeScreen(navController: NavController, userRepository: UserRepository) {
                             navController.navigate(Screens.otherCategory)
                         }
 }}} } }
+
 }
+
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable

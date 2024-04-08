@@ -2,6 +2,7 @@ package com.example.taskify
 
 import android.content.Context
 import android.os.Build
+import androidx.activity.OnBackPressedDispatcher
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
@@ -46,7 +47,7 @@ fun AppNavigation(context: Context){
         composable(Screens.signUp)
         {
             signUp(
-                navController = navController, userRepository = userRepository
+                navController = navController, userRepository = userRepository,
             )
         }
         composable(Screens.loginScreen)
@@ -57,13 +58,15 @@ fun AppNavigation(context: Context){
 
         composable(Screens.homeScreen)
         {
-            homeScreen(navController = navController,
-                userRepository)
+            homeScreen(navController = navController, userRepository,
+                onBackPressedDispatcher = OnBackPressedDispatcher()
+            )
         }
 
         composable(Screens.createTask)
         {
-            createTask(navController = navController)
+            createTask(navController = navController,
+                userRepository)
         }
 
         composable(Screens.calender)
@@ -83,15 +86,18 @@ fun AppNavigation(context: Context){
         }
 
         composable(Screens.workCategory){
-            workCategory(navController = navController)
+            workCategory(navController = navController,
+                userRepository)
         }
         
         composable(Screens.studyCategory){
-            studyCategory(navController = navController)
+            studyCategory(navController = navController,
+                userRepository)
         }
         
         composable(Screens.otherCategory){
-            otherCategory(navController = navController)
+            otherCategory(navController = navController,
+                userRepository)
         }
     }
 }

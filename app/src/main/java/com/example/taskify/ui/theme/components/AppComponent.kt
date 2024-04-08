@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,15 +16,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -54,9 +60,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskify.R
+import com.example.taskify.database.UserRepository
 
 @Composable
 fun MyTextFieldComponent(
@@ -287,6 +295,54 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
             }
         })
 }
+@Composable
+fun categories(userRepository: UserRepository,
+               category: String)
+{
+    val tasks = userRepository.getTasksByCategory(category)
+
+    Column(modifier = Modifier) {
+        if (tasks.isNotEmpty()) {
+            LazyColumn {
+                items(tasks) { task ->
+                    // Display each task here
+                    ElevatedCard(shape = RoundedCornerShape(10.dp),
+                        colors = CardDefaults.elevatedCardColors(
+                            Color(0xFF6368D9)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        onClick = { /*TODO*/ })
+                    {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(5.dp,
+                                Alignment.CenterVertically ),
+                            modifier = Modifier
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = task.title,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.Start)
+                            )
+                            Text(
+                                text = task.date,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                            )
+                        }
+
+                    }
+                }
+            }
+        } else {
+            Text(text = "No tasks found")
+        }
+    }
+}
 
 @Composable
 fun CategoryCard(
@@ -326,9 +382,10 @@ fun CategoryCard(
 @Composable
 fun Tags(
     label: String,
-    modifier: Modifier
+    modifier: Modifier,
+    selected: Boolean,
+    onTagClicked: () -> Unit
 ) {
-    var selected by remember { mutableStateOf(false) }
 
     Box(contentAlignment = Alignment.Center,
         modifier = modifier
@@ -337,7 +394,7 @@ fun Tags(
                 color = if (selected) Color(0xFF6368D9)
                 else Color(0xFFCFD3FF)
             )
-            .clickable { selected = !selected }
+            .clickable { onTagClicked() }
             .padding(8.dp)
     ) {
         Text(
@@ -357,4 +414,36 @@ fun Tags(
             )
         }
     }
+}
+@Composable
+fun ExitConfirmationDialog(
+    onConfirmExit: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            text = { Text("Do you want to exit from the app?") },
+            confirmButton = {
+                Button(onClick = onConfirmExit) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                Button(onClick = onDismiss,
+                ) {
+                    Text("No")
+                }
+            }
+        )
+    }
+
+}
+@Preview
+@Composable
+fun e(){
+    Tags(label = "work", modifier = Modifier, selected =true ) {
+        
+    }
+//    ExitConfirmationDialog(onConfirmExit = { /*TODO*/ },{})
 }

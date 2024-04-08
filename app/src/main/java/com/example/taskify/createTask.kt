@@ -55,19 +55,24 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
+import com.example.taskify.database.Task
+import com.example.taskify.database.UserRepository
 import com.example.taskify.ui.theme.components.Tags
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun createTask(navController: NavController) {
+fun createTask(navController: NavController, userRepository: UserRepository) {
 
     var title by remember {
         mutableStateOf("")
     }
 
     var description by remember {
+        mutableStateOf("")
+    }
+    var selectedCategory by remember {
         mutableStateOf("")
     }
     val mContext = LocalContext.current
@@ -345,12 +350,28 @@ fun createTask(navController: NavController) {
                         modifier = Modifier.fillMaxWidth()
                     )
                     {
-                        Tags(label = "Work",
-                            modifier = Modifier.width(115.dp))
-                        Tags(label = "Personal",
-                            modifier = Modifier.width(115.dp))
+                        Tags(
+                            label = "Work",
+                            modifier = Modifier
+                                .width(115.dp)
+                                .clickable {
+                                    selectedCategory = "Work"
+                                },
+                            selected = selectedCategory == "Work",
+                            onTagClicked = { selectedCategory = "Work" }
+                        )
+                        Tags(label = "Study",
+                            modifier = Modifier.width(115.dp)
+                                .clickable { selectedCategory = "Study" },
+                            selected = selectedCategory == "Study",
+                            onTagClicked = {selectedCategory = "Study"}
+                        )
                         Tags(label = "Other",
-                            modifier = Modifier.width(115.dp))
+                            modifier = Modifier.width(115.dp)
+                                .clickable { selectedCategory = "Other" },
+                            selected = selectedCategory == "Other",
+                            onTagClicked = {selectedCategory = "Other"}
+                        )
                     }
                 }
 
@@ -412,7 +433,17 @@ fun createTask(navController: NavController) {
                         containerColor = Color(0xFF6368D9)
                     ),
 
-                    onClick = { /*TODO*/ })
+                    onClick = {
+                        if (selectedCategory.isNotBlank()) {
+                            userRepository.insertTask(task = Task(id = null, title = title,
+                                date = mDate.value, startTime = startTime.value, endTime = endTime.value,
+                                category = selectedCategory, description = description)
+                            )
+
+                            // After saving the task, navigate back to the home screen
+                            navController.popBackStack() // Assuming the home screen is the previous destination
+                        }
+                    })
                 {
                     Text(text = "Save task")
                 }
@@ -428,5 +459,5 @@ fun createTask(navController: NavController) {
 @Preview
 @Composable
 fun previewCreateTask() {
-    createTask(rememberNavController())
+//    createTask(rememberNavController())
 }

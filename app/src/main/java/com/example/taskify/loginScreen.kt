@@ -54,9 +54,7 @@ import com.example.taskify.ui.theme.components.passwordMyTextFieldComponent
 
 @Composable
 fun loginScreen(navController: NavController, userRepository: UserRepository){
-    var userName by remember {
-        mutableStateOf("")
-    }
+    var userName by remember {mutableStateOf("")}
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginSuccess by remember { mutableStateOf(false) }
@@ -147,9 +145,26 @@ fun loginScreen(navController: NavController, userRepository: UserRepository){
                         Toast.makeText(context,"Welcome Again",
                             Toast.LENGTH_LONG).show()
                     }
+                    else if(userName.isEmpty() && email.isEmpty()&& password.isEmpty()) {
+                            Toast.makeText(context, "Fields are Empty", Toast.LENGTH_SHORT)
+                    }
+                    else if(userName.isNotEmpty() && email.isEmpty()&& password.isEmpty()) {
+                        Toast.makeText(context, "Email and Password are empty", Toast.LENGTH_SHORT)
+                    }
+                    else if(userName.isNotEmpty() && email.isNotEmpty()&& password.isEmpty()) {
+                        Toast.makeText(context, "please enter Password", Toast.LENGTH_SHORT)
+                    }
+                    else if(userName.isNotEmpty() && email.isEmpty() && password.isNotEmpty()) {
+                        Toast.makeText(context, "please enter Email", Toast.LENGTH_SHORT)
+                    }
+                    else if(userName.isEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
+                        Toast.makeText(context, "please enter UserName", Toast.LENGTH_SHORT)
+                    }
+                    else if(userName.isEmpty() && email.isEmpty()&& password.isNotEmpty()) {
+                        Toast.makeText(context, "Enter UserName and email", Toast.LENGTH_SHORT)
+                    }
                     else{
-                        Toast.makeText(context,"try Again", Toast.LENGTH_LONG).show()
-
+                        Toast.makeText(context, "Invalid data", Toast.LENGTH_LONG)
                     }
 
                 }) {

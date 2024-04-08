@@ -1,6 +1,8 @@
 package com.example.taskify
 
 import android.annotation.SuppressLint
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -49,12 +51,6 @@ fun signUp(
         modifier = Modifier.fillMaxSize()
     )
     {
-//        AnimatedVisibility(isPasswordSame) {
-//            Text(
-//                text = "Password is not Matching",
-//                color = Color(0xFF6368D9)
-//            )
-//        }
 
         Text(
             text = "Create Your\n Account",
@@ -146,6 +142,7 @@ fun signUp(
 
 fun checkFieldsFilled(username: String, email: String, password: String): Boolean {
     return username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
+            && email.endsWith("@gmail.com") && email.length>=11
 }
 
 @Preview
