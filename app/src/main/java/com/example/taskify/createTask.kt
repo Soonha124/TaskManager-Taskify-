@@ -177,44 +177,10 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
 
     val calendarForStartTime = Calendar.getInstance()
     val calendarForEndTime = Calendar.getInstance()
-//    val mYear: Int
-//    val mMonth: Int
-//    val mDay: Int
-//
-//    val calendarInstance = Calendar.getInstance()
-//    mYear = calendarInstance.get(Calendar.YEAR)
-//    mMonth = calendarInstance.get(Calendar.MONTH)
-//    mDay = calendarInstance.get(Calendar.DAY_OF_MONTH)
-//    calendarInstance.time = Date()
-//    val date = remember { mutableStateOf("") }
-
-//    val mDatePickerDialog = DatePickerDialog(
-//        context,
-//        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-//            date.value = "$dayOfMonth/${month + 1}/$year"
-//        }, mYear, mMonth, mDay
-//    )
 
 
-//    val startHour = calendarInstance[Calendar.HOUR_OF_DAY]
-//    val startMinute = calendarInstance[Calendar.MINUTE]
 
 
-//    val mTimePickerDialog = TimePickerDialog(
-//        context,
-//        { _, startHour: Int, startMinute: Int ->
-//            startTime.value = "$startHour:$startMinute"
-//        }, startHour, startMinute, false
-//    )
-
-//    val endHour = calendarInstance[Calendar.HOUR_OF_DAY]
-//    val endMinute = calendarInstance[Calendar.MINUTE]
-//    val endTimePickerDialog = TimePickerDialog(
-//        context,
-//        { _, endHour: Int, endMinute: Int ->
-//            endTime.value = "$endHour:$endMinute"
-//        }, endHour, endMinute, false
-//    )
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
         bottom = 10.dp
@@ -318,7 +284,6 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
                     onClick = {
                         showDatePicker(context, calendarForStartTime) {
                             date  = formatDate(calendarForStartTime)
-//                                "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH) + 1}/${calendar.get(Calendar.YEAR)}"
                         }
                     })
                 Text(
@@ -353,7 +318,6 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
                             onClick = {
                                 showTimePicker(context, calendarForStartTime) {
                                     startTime = formatTime(calendarForStartTime)
-//                                        "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                                 }
                             }
                         )
@@ -403,7 +367,6 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
                         .clickable(onClick = {
                             showTimePicker(context, calendarForEndTime) {
                                 endTime = formatTime(calendarForEndTime)
-//                                    "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}"
                             }
                         })
                 ) {
@@ -585,13 +548,7 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
                 ){
                     Text(text = "Save task")
                 }
-
-
-
-            }
-        }
-
-    }
+                }}}
 
 }
 private fun formatDate(calendar: Calendar): String {
