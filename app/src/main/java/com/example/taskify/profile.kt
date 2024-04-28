@@ -12,18 +12,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,21 +38,23 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.taskify.database.UserRepository
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun profile(navController: NavController,
-            userRepository: UserRepository)
-{
+fun profile(
+    navController: NavController,
+    userRepository: UserRepository,
+) {
     val username = userRepository.getUserName()
+
 
     val coroutineScope = rememberCoroutineScope()
     var navNum by remember {
@@ -59,19 +63,39 @@ fun profile(navController: NavController,
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
         bottom = 10.dp
-    ), topBar = {
-        Text(
-            modifier = Modifier.padding(all = 10.dp),
-            text = "Profile",
-            style = TextStyle(
-                fontSize = 14.sp,
-                fontWeight = FontWeight(700),
-                color = Color(0xFF6368D9),
-                textAlign = TextAlign.Center,
-                letterSpacing = 0.28.sp,
-            )
-        )
-    },
+    ),
+        topBar = {
+            TopAppBar(title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    modifier = Modifier
+                        .padding(all = 10.dp))
+                {
+                    Icon(painter = painterResource(
+                        id =R.drawable.userprofile ) ,
+                        contentDescription ="" ,
+                        tint = Color(0xFF6368D9)
+                        , modifier = Modifier
+                            .background(
+                                shape =
+                                RoundedCornerShape(40.dp),
+                                color = Color.Transparent)
+                            .size(30.dp)
+                    )
+                    Text(
+                        text = username,
+                        style = TextStyle(
+                            fontSize = 30.sp,
+                            fontFamily = FontFamily.Cursive,
+                            fontWeight = FontWeight(700),
+                            color = Color(0xFF6368D9),
+                            textAlign = TextAlign.Center,
+                            letterSpacing = 0.28.sp
+                        )
+                    )}
+            })
+        },
         bottomBar = {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -108,80 +132,81 @@ fun profile(navController: NavController,
                     IconButton(
                         onClick = {
                             navController.navigate("calender")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calendar),
-                            contentDescription = "",
-                            tint = Color(0xFF6368D9),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.calendar),
+                                contentDescription = "",
+                                tint = Color(0xFF6368D9),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        })
                 } else {
                     IconButton(
                         onClick = {
                             navController.navigate("calender")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calendar),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.calendar),
+                                contentDescription = "",
+                                tint = Color(0xFFA0A4FF),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        })
                 }
                 if (navNum == 2) {
                     IconButton(
                         onClick = {
                             navController.navigate("notification")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.notification),
-                            contentDescription = "",
-                            tint = Color(0xFF6368D9),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.notification),
+                                contentDescription = "",
+                                tint = Color(0xFF6368D9),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        })
                 } else {
                     IconButton(
                         onClick = {
                             navController.navigate("notification")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.notification),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.notification),
+                                contentDescription = "",
+                                tint = Color(0xFFA0A4FF),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        })}
                 if (navNum == 3) {
                     IconButton(
                         onClick = {
                             navController.navigate("profile")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "",
-                            tint = Color(0xFF6368D9),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.profile),
+                                contentDescription = "",
+                                tint = Color(0xFF6368D9),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        })
                 } else {
                     IconButton(
                         onClick = {
                             navController.navigate("profile")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
-
-            }
-
+                        },
+                        content = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.profile),
+                                contentDescription = "",
+                                tint = Color(0xFFA0A4FF),
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }) }}
         }
     ) { innerPadding ->
         Column(
@@ -192,140 +217,118 @@ fun profile(navController: NavController,
                 .padding(all = 20.dp)
                 .padding(innerPadding)
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier
-                    .fillMaxWidth())
-            {
-                Box(modifier = Modifier
-                    .height(30.dp)
-                )
-                {
-                    Image(painter = painterResource(
-                        id =R.drawable.userprofile ) ,
-                        contentDescription ="" ,
-                        colorFilter = ColorFilter.tint(Color(0xFF6368D9))
-                    , modifier = Modifier
-                            .background(
-                                shape =
-                                RoundedCornerShape(40.dp),
-                                color = Color.Transparent
-                            )
-                            .align(Alignment.TopStart)
-                    )
-                }
-                Text(
-                    text = username,
-                    style = TextStyle(
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight(700),
-                        color = Color(0xFF6368D9),
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 0.28.sp,
-                    )
-                )
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                Card(elevation = CardDefaults.elevatedCardElevation(
-                    10.dp,
-                    pressedElevation = 50.dp,
-                    hoveredElevation = 30.dp
-                ),
-                    shape = RoundedCornerShape(30.dp),
+            Column(
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Card(
+                    elevation = CardDefaults.elevatedCardElevation(
+                        10.dp
+                    ),
+                    shape = RoundedCornerShape(
+                        topEnd = 50.dp,
+                        bottomStart = 50.dp
+                    ),
                     colors = CardDefaults.cardColors(
                         Color(0xFF6368D9)
                     ),
                     modifier = Modifier
                         .height(250.dp)
                         .fillMaxWidth(),
-                    onClick = { /*TODO*/ })
-
-                {
-                    Text(
-                        modifier = Modifier.padding(15.dp),
-                        text = "Amazing",
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight(700),
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            letterSpacing = 0.28.sp,
-                        )
-                    )
-                    Row {
+                    content = {
                         Text(
-                            modifier = Modifier
-                                .padding(15.dp)
-                                .weight(3f),
-                            text = "You have Completed\n 103 task!",
+                            modifier = Modifier.padding(15.dp),
+                            text = "Amazing",
                             style = TextStyle(
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight(700),
                                 color = Color.White,
                                 textAlign = TextAlign.Center,
                                 letterSpacing = 0.28.sp,
                             )
                         )
-                        Image(
-                            painter = painterResource(id = R.drawable.diary),
-                            contentDescription = "",
-//                            contentScale = ContentScale.FillHeight,
-                            modifier = Modifier
-                                .weight(1f)
-                                .size(100.dp, 100.dp),
-                            colorFilter = ColorFilter.tint(Color.LightGray)
-                        )
-                    }
-                    Row(modifier = Modifier.padding(start = 20.dp)) {
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier
-                                .background(
-                                    Color(0xFFD6D8FD),
-                                    shape = RoundedCornerShape(20.dp)
-                                )
-                                .width(100.dp)
-                                .height(46.dp)
-                                .fillMaxWidth()
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                modifier = Modifier.padding(15.dp),
-                                text = "Details",
+                                modifier = Modifier
+                                    .padding(15.dp)
+                                    .weight(2f),
+                                text = "You have Completed\n 103 task!",
                                 style = TextStyle(
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight(700),
-                                    color = Color(0xFF6368D9),
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
                                     textAlign = TextAlign.Center,
                                     letterSpacing = 0.28.sp,
                                 )
                             )
+                            Image(
+                                painter = painterResource(id = R.drawable.splash),
+                                contentDescription = "",
+                                modifier = Modifier
+                                    .weight(2f)
+                                    .size(150.dp),
+                            )
                         }
-                    }
-
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+//
+                        ElevatedButton(shape = RoundedCornerShape(
+                            topEnd = 20.dp,
+                            bottomStart = 20.dp
+                        ), colors = ButtonDefaults.buttonColors(
+                            Color.White
+                        ),
+                            elevation = ButtonDefaults.elevatedButtonElevation(
+                                defaultElevation = 5.dp
+                            ),
+                            modifier = Modifier.align(Alignment.CenterHorizontally), onClick = {
+                                navController.navigate(Screens.calender)
+                            },
+                            content = {
+                                Text(
+                                    text = "Details",
+                                    style = TextStyle(
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF6368D9)
+                                    )
+                                )
+                            })
+                    })
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                )
+                {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .background(
-                                Color(0xFFD6D8FD),
-                                shape = RoundedCornerShape(30.dp)
+                                Color(0xFF6368D9),
+                                shape = RoundedCornerShape(
+                                    topEnd = 30.dp,
+                                    bottomStart = 30.dp
+                                )
                             )
                             .fillMaxWidth()
                             .padding(12.dp)
+                            .clickable(onClick = {
+                                navController.navigate(Screens.userAccountInfo)
+                            })
                     ) {
                         Icon(
                             Icons.Default.Person,
                             contentDescription = "",
-                            tint = Color(0xFF6368D9)
+                            tint = Color.White
                         )
                         Text(
+                            modifier = Modifier,
                             text = "Account Information",
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight(700),
-                                color = Color(0xFF6368D9),
+                                color = Color.White,
                                 textAlign = TextAlign.Center,
                                 letterSpacing = 0.28.sp,
                             )
@@ -366,31 +369,40 @@ fun profile(navController: NavController,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .background(
-                                Color(0xFFD6D8FD),
-                                shape = RoundedCornerShape(30.dp)
+                                Color(0xFF6368D9),
+                                shape = RoundedCornerShape(
+                                    topStart = 30.dp,
+                                    bottomEnd = 30.dp
+                                )
                             )
-                            .clickable(onClick = {
+                            .clickable {
+                                userRepository.clearUserData()
+//                                userRepository.saveUserName("")
+
                                 coroutineScope.launch {
                                     navController.popBackStack(
                                         Screens.signUp,
-                                        inclusive = false)
+                                        inclusive = false
+                                    )
                                 }
-                            })
+                            }
+
                             .fillMaxWidth()
                             .padding(12.dp)
 
                     ) {
-                        Icon(modifier = Modifier.size(24.dp),
+                        Icon(
+                            modifier = Modifier.size(24.dp),
                             painter = painterResource(id = R.drawable.login),
                             contentDescription = "",
-                            tint = Color(0xFF6368D9)
+                            tint = Color.White
                         )
                         Text(
                             text = "Log out",
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight(700),
-                                color = Color(0xFF6368D9),
+                                color = Color.White,
                                 textAlign = TextAlign.Center,
                                 letterSpacing = 0.28.sp,
                             )
@@ -402,10 +414,4 @@ fun profile(navController: NavController,
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun profilePreview() {
-//    profile(rememberNavController())
 }
