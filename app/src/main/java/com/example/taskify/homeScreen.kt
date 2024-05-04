@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,15 +52,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.taskify.database.UserRepository
-import com.example.taskify.ui.theme.components.CategoryCard
+import com.example.taskify.components.CategoryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun homeScreen(navController: NavController, userRepository: UserRepository,
-onBackPressedDispatcher: OnBackPressedDispatcher) {
+fun homeScreen(navController: NavController, userRepository: UserRepository) {
     var navNum by remember {
         mutableStateOf(0)
     }
+    val userId = navController.previousBackStackEntry?.arguments?.getLong("userId") ?: -1L
+
     val username = userRepository.getUserName()
     Scaffold(
         modifier = Modifier.padding(
@@ -78,34 +80,29 @@ onBackPressedDispatcher: OnBackPressedDispatcher) {
                         })
                 )
                 {
-                    Box(modifier = Modifier
-                            .height(30.dp)
 
-                    ) {
-                        Image(painter = painterResource(
+                        Icon(painter = painterResource(
                             id =R.drawable.userprofile ) ,
                             contentDescription ="" ,
-                            colorFilter = ColorFilter.tint(Color(0xFF6368D9))
+                            tint = Color(0xFF6368D9)
                             , modifier = Modifier
                                 .background(
                                     shape =
                                     RoundedCornerShape(40.dp),
-                                    color = Color.Transparent
-                                )
-                                .align(Alignment.TopStart)
+                                    color = Color.Transparent)
+                                .size(30.dp)
                         )
-                    }
-                    Text(
-                        text = username,
-                        style = TextStyle(
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight(700),
-                            color = Color(0xFF6368D9),
-                            textAlign = TextAlign.Center,
-                            letterSpacing = 0.28.sp,
-                        )
-                    )
-                }
+                        Text(
+                            text = username,
+                            style = TextStyle(
+                                fontSize = 30.sp,
+                                fontFamily = FontFamily.Cursive,
+                                fontWeight = FontWeight(700),
+                                color = Color(0xFF6368D9),
+                                textAlign = TextAlign.Center,
+                                letterSpacing = 0.28.sp,
+                            )
+                        )}
             })
         },
         floatingActionButton = {
@@ -116,7 +113,8 @@ onBackPressedDispatcher: OnBackPressedDispatcher) {
                 containerColor = Color(0xFF673AB7),
                 contentColor = Color.White,
                 onClick = {
-                    navController.navigate("createTask")
+//                    navController.navigate("createTask/-1")
+                    navController.navigate("${Screens.createTask}?userId = $userId" )
                 }) {
                 Icon(
                     Icons.Default.Add,
@@ -209,6 +207,7 @@ onBackPressedDispatcher: OnBackPressedDispatcher) {
                     .fillMaxWidth()
             ) {
                 LinearProgressIndicator(
+                    progress = { 0.45f },
                     modifier = Modifier
                         .padding(
                             top = 30.dp,
@@ -219,9 +218,8 @@ onBackPressedDispatcher: OnBackPressedDispatcher) {
                             elevation = 5.dp,
                             shape = RoundedCornerShape(2.dp)
                         ),
-                    progress = 0.45f,
                     color = Color(0xFFEEEFFF),
-                    trackColor = Color(0xFFCDCFEE)
+                    trackColor = Color(0xFFCDCFEE),
                 )
             }
             Text(

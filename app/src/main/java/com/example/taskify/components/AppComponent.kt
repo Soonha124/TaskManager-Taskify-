@@ -1,10 +1,8 @@
-package com.example.taskify.ui.theme.components
+package com.example.taskify.components
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,19 +33,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -64,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskify.R
+import com.example.taskify.database.Task
 import com.example.taskify.database.UserRepository
 
 @Composable
@@ -71,7 +65,7 @@ fun MyTextFieldComponent(
     labelValue:String, painterResource: Painter,
     onTextSelected: (String) -> Unit,
 ){
-    var textValue = rememberSaveable {
+    val textValue = rememberSaveable {
         mutableStateOf("")
     }
     OutlinedTextField(
@@ -106,11 +100,11 @@ fun passwordMyTextFieldComponent(
     onTextSelected: (String) -> Unit
 ){
     val localFocusManager = LocalFocusManager.current
-    
-    var password = rememberSaveable {
+
+    val password = rememberSaveable {
         mutableStateOf("")
     }
-    var passwordVisible = remember {
+    val passwordVisible = remember {
         mutableStateOf(false)
     }
     OutlinedTextField(
@@ -124,7 +118,7 @@ fun passwordMyTextFieldComponent(
             Text(text = labelValue)
         },
         onValueChange = {
-        password.value = it
+            password.value = it
             onTextSelected(it)
         },
         keyboardOptions = KeyboardOptions(
@@ -233,14 +227,16 @@ fun confirmPasswordMyTextFieldComponent(
     )
 }
 @Composable
-fun ButtonComponent(value: String, onButtonClicked:()-> Unit, isEnabled : Boolean = false){
+fun ButtonComponent(value: String,
+                    onButtonClicked:()-> Unit,
+                    isEnabled : Boolean = false){
     Button(
         modifier = Modifier.width(261.dp),
         colors = ButtonDefaults.buttonColors(
             Color(0xFF6368D9)
         ),
         onClick = {
-        onButtonClicked.invoke()
+            onButtonClicked.invoke()
         },
         enabled = isEnabled
     )
@@ -259,8 +255,10 @@ fun ButtonComponent(value: String, onButtonClicked:()-> Unit, isEnabled : Boolea
 }
 @Composable
 fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
-                                onTextSelected: (String) -> Unit) {
-    val initialText = if(tryingToLogin) "Already have an account? " else "Dont have an account? "
+                                onTextSelected: (String) -> Unit)
+{
+    val initialText = if(tryingToLogin) "Already have an account? " else
+        "Don't have an account? "
     val loginText = if(tryingToLogin)"Log In" else "Register"
 
     val annotatedString = buildAnnotatedString {
@@ -286,7 +284,7 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
                 offset, offset
             ).firstOrNull()?.also { span ->
                 Log.d(
-                    "ClickabletextComponent",
+                    "ClickableTextComponent",
                     "{${span.item}}"
                 )
                 if (span.item == loginText) {
@@ -299,23 +297,27 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
 fun categories(userRepository: UserRepository,
                category: String)
 {
+
+
     val tasks = userRepository.getTasksByCategory(category)
 
     Column(modifier = Modifier) {
         if (tasks.isNotEmpty()) {
             LazyColumn {
                 items(tasks) { task ->
-                    // Display each task here
-                    ElevatedCard(shape = RoundedCornerShape(10.dp),
+                    ElevatedCard(shape = RoundedCornerShape(topEnd = 30.dp,
+                        bottomStart = 30.dp),
                         colors = CardDefaults.elevatedCardColors(
                             Color(0xFF6368D9)
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp),
-                        onClick = { /*TODO*/ })
+                        onClick = {
+//                            onClick(task)
+                        })
                     {
-                        Column(
+                        Column(horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(5.dp,
                                 Alignment.CenterVertically ),
                             modifier = Modifier
@@ -331,7 +333,7 @@ fun categories(userRepository: UserRepository,
                                 text = task.date,
                                 color = Color.White,
                                 modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
+                                    .align(Alignment.Start)
                             )
                         }
 
@@ -355,7 +357,7 @@ fun CategoryCard(
             .fillMaxWidth()
             .height(100.dp)
             .padding(8.dp),
-        shape = RoundedCornerShape(16.dp) ) {
+        shape = RoundedCornerShape(topEnd = 30.dp, bottomStart = 30.dp) ) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -363,8 +365,8 @@ fun CategoryCard(
                 .background(Color(0xFF6368D9))
                 .fillMaxSize()
                 .padding(10.dp)
-            ,
-        ) {
+            )
+        {
             Icon(painter = painterResource(id = iconResourceId),
                 contentDescription = "",
                 tint = Color(0xFFCDCFEE),
@@ -379,6 +381,14 @@ fun CategoryCard(
     }
 }
 
+@Preview
+@Composable
+fun p(){
+    CategoryCard(category = "text here",
+        iconResourceId = R.drawable.work) {
+        
+    }
+}
 @Composable
 fun Tags(
     label: String,
@@ -390,7 +400,7 @@ fun Tags(
     Box(contentAlignment = Alignment.Center,
         modifier = modifier
             .background(
-                shape = RoundedCornerShape(10.dp),
+                shape = RoundedCornerShape(topEnd = 20.dp, bottomStart = 20.dp),
                 color = if (selected) Color(0xFF6368D9)
                 else Color(0xFFCFD3FF)
             )
@@ -443,7 +453,7 @@ fun ExitConfirmationDialog(
 @Composable
 fun e(){
     Tags(label = "work", modifier = Modifier, selected =true ) {
-        
+
     }
 //    ExitConfirmationDialog(onConfirmExit = { /*TODO*/ },{})
 }

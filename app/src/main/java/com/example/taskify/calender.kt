@@ -45,9 +45,9 @@ data class Taskk(
 )
 
 val taskList = listOf(
-    Taskk("College Stuff", "Prepare presentaion",  2 ),
-    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("Study", "Prepare presentaion",  2 ),
     Taskk("Work", "Prepare presentaion", 3),
+    Taskk("Other", "Prepare presentaion", 3),
     Taskk("Gym", "Prepare presentaion", 3),
     Taskk("Personal Projects", "Prepare presentaion", 3),
     Taskk("University Stuff", "Prepare presentaion", 3),
@@ -63,7 +63,7 @@ val taskList = listOf(
 
 @Composable
 fun calender(navController: NavController) {
-    var navNum by remember {
+    val navNum by remember {
         mutableStateOf(1)
     }
     Scaffold(modifier = Modifier.padding(
@@ -227,7 +227,7 @@ fun calender(navController: NavController) {
             }
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.spacedBy(20.dp),
                 modifier = Modifier.fillMaxWidth()
             )
             {
@@ -238,18 +238,31 @@ fun calender(navController: NavController) {
                             .width(286.dp)
                             .height(77.dp)
                             .background(
-                                color = Color(0xFFD1D0F9),
+                                color = Color(0xFF6368D9),
                                 shape = RoundedCornerShape(size = 15.dp)
                             )
                     ) {
-                        Column {
-                            Text(text = task.category)
-                            Text(text = task.description)
-                            Text(text = "Time: ${task.time} hours")
+                        Column(verticalArrangement = Arrangement.spacedBy(5.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp)) {
+                            Text(text = "Category : ${task.category }",
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                            Text(text = "Description :${task.description}",
+                                style = TextStyle(
+                                    color = Color.White
+                                ))
+                            Text(text = "Time: ${task.time} hours",
+                                style = TextStyle(
+                                    color = Color.White
+                                ))
 
                         }
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
+//                    Spacer(modifier = Modifier.height(20.dp))
 
                 }
             }

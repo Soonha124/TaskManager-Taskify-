@@ -376,15 +376,19 @@ fun profile(
                                 )
                             )
                             .clickable {
-                                userRepository.clearUserData()
-//                                userRepository.saveUserName("")
-
                                 coroutineScope.launch {
-                                    navController.popBackStack(
-                                        Screens.signUp,
-                                        inclusive = false
-                                    )
+                                    userRepository.logoutUser()
+//                                    userRepository.clearUserData()
+                                    navController.navigate(Screens.loginScreen) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
+//                                    navController.popBackStack(
+//                                        Screens.signUp,
+//                                        inclusive = false
+//                                    )
                             }
 
                             .fillMaxWidth()

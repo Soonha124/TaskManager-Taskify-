@@ -7,23 +7,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -31,55 +29,62 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.taskify.database.UserRepository
-import com.example.taskify.ui.theme.components.categories
+import com.example.taskify.components.categories
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun workCategory(
     navController: NavController,
-    userRepository: UserRepository,
+    userRepository: UserRepository
 ) {
+    val userId = userRepository.getCurrentUserId() ?: -1
     Scaffold(modifier = Modifier.padding(15.dp),
         topBar = {
-        TopAppBar(
-            title = {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(108.dp,
-                        Alignment.Start),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Icon(
-                        Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "",
-                        tint = Color(0xFF6368D9),
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable(onClick = {
-                                navController.navigate(Screens.homeScreen)
-                            })
-                    )
-                    Text(modifier = Modifier.align(Alignment.CenterVertically),
-                        text = "Work",
-                        style = TextStyle(
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight(700),
-                            color = Color(0xFF6368D9),
-                            textAlign = TextAlign.Center,
-                            letterSpacing = 0.28.sp,
+            TopAppBar(
+                title = {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(
+                            108.dp,
+                            Alignment.Start
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "",
+                            tint = Color(0xFF6368D9),
+                            modifier = Modifier
+                                .size(30.dp)
+                                .clickable(onClick = {
+                                    navController.navigate(Screens.homeScreen)
+                                })
                         )
-                    )
-                }
-            })
-    }) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)){
+                        Text(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            text = "Work",
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight(700),
+                                color = Color(0xFF6368D9),
+                                textAlign = TextAlign.Center,
+                                letterSpacing = 0.28.sp,
+                            )
+                        )
+                    }
+                })
+        }) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
             categories(userRepository = userRepository,
                 category = "Work")
 
         }
     }
 }
+
+
 
 @Preview
 @Composable

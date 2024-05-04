@@ -1,5 +1,7 @@
 package com.example.taskify
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,13 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.taskify.database.UserRepository
-import com.example.taskify.ui.theme.components.categories
+import com.example.taskify.components.categories
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun otherCategory(navController: NavController,
                   userRepository: UserRepository)
 {
+    val userId = userRepository.getCurrentUserId()
+        Log.d("UserID", "Current User ID in other Category: $userId")
+
     Scaffold(modifier = Modifier.padding(15.dp), topBar = {
     TopAppBar(title = {Row(
         horizontalArrangement = Arrangement.spacedBy(108.dp,

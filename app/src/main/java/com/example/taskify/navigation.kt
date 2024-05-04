@@ -2,12 +2,9 @@ package com.example.taskify
 
 import android.content.Context
 import android.os.Build
-import androidx.activity.OnBackPressedDispatcher
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -27,6 +24,8 @@ object Screens
     const val workCategory = "workCategory"
     const val studyCategory = "studyCategory"
     const val otherCategory = "otherCategory"
+    const val userAccountInfo = "userAccountInfo"
+
 
 }
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,6 +35,7 @@ fun AppNavigation(context: Context){
     val userRepository = UserRepository(context = LocalContext.current,
         UserDbHelper(context))
 
+    val userId = userRepository.getCurrentUserId() ?: -1L
     NavHost(navController = navController,
         startDestination = Screens.splashScreen)
     {
@@ -47,8 +47,7 @@ fun AppNavigation(context: Context){
         composable(Screens.signUp)
         {
             signUp(
-                navController = navController, userRepository = userRepository,
-            )
+                navController = navController, userRepository = userRepository)
         }
         composable(Screens.loginScreen)
         {
@@ -56,12 +55,21 @@ fun AppNavigation(context: Context){
                 navController = navController, userRepository = userRepository)
         }
 
+
+
         composable(Screens.homeScreen)
         {
             homeScreen(navController = navController, userRepository,
-                onBackPressedDispatcher = OnBackPressedDispatcher()
+//                onBackPressedDispatcher = OnBackPressedDispatcher()
             )
         }
+
+//        composable(Screens.createTask)
+//        { backStackEntry ->
+//            val taskId = backStackEntry.arguments?.getString("taskId")?.toLongOrNull()
+//            createTask(navController = navController, userRepository = userRepository, userId = userId, taskId = taskId)
+//
+//        }
 
         composable(Screens.createTask)
         {
@@ -89,15 +97,20 @@ fun AppNavigation(context: Context){
             workCategory(navController = navController,
                 userRepository)
         }
-        
+
         composable(Screens.studyCategory){
             studyCategory(navController = navController,
                 userRepository)
         }
-        
+
         composable(Screens.otherCategory){
             otherCategory(navController = navController,
                 userRepository)
+        }
+
+        composable(Screens.userAccountInfo){
+            userAccountInfo(navController = navController,
+                userRepository = userRepository)
         }
     }
 }

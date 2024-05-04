@@ -1,6 +1,7 @@
 package com.example.taskify
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -17,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,24 +30,43 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.taskify.database.UserRepository
-import com.example.taskify.ui.theme.components.ButtonComponent
-import com.example.taskify.ui.theme.components.ClickableLoginTextComponent
-import com.example.taskify.ui.theme.components.MyTextFieldComponent
-import com.example.taskify.ui.theme.components.confirmPasswordMyTextFieldComponent
-import com.example.taskify.ui.theme.components.passwordMyTextFieldComponent
+import com.example.taskify.components.ButtonComponent
+import com.example.taskify.components.ClickableLoginTextComponent
+import com.example.taskify.components.MyTextFieldComponent
+import com.example.taskify.components.confirmPasswordMyTextFieldComponent
+import com.example.taskify.components.passwordMyTextFieldComponent
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun signUp(
     navController: NavHostController,
     userRepository: UserRepository,
+
 ) {
+    val context = LocalContext.current
     var username by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var registrationSuccess by rememberSaveable { mutableStateOf(false) }
+    var attemptRegistration by rememberSaveable { mutableStateOf(false) }
 
+    LaunchedEffect(attemptRegistration) {
+        if (attemptRegistration && password == confirmPassword && checkFieldsFilled(username, email, password)) {
+            registrationSuccess = userRepository.registerUser(username, email, password)
+            if (registrationSuccess) {
+                val userId = userRepository.getCurrentUserId()  // Ensure this gets the correct user ID
+                if (userId != -1L) {
+                    navController.navigate(Screens.homeScreen)
+                } else {
+                    Toast.makeText(context, "Registration error. Please try again.",
+                        Toast.LENGTH_LONG).show()
+                }
+            }
+            attemptRegistration = false
+        }
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -109,24 +131,25 @@ fun signUp(
         ButtonComponent(
             value = "Register",
             onButtonClicked = {
-                              if (password == confirmPassword){
-                                  val registered = userRepository.registerUser(username, email, password)
-                                  if (registered)
-                                  {
-                                      registrationSuccess = true
-                                      userRepository.saveUserName(username)
-                                  } else {
-
-                                  }
-                              }
-                              else {
-
-                              }
+                              attemptRegistration = true
+//                              if (password == confirmPassword){
+//                                  val registered = userRepository.registerUser(username, email, password)
+//                                  if (registered)
+//                                  {
+//                                      registrationSuccess = true
+//                                      userRepository.saveUserName(username)
+//                                  } else {
+//
+//                                  }
+//                              }
+//                              else {
+//
+//                              }
             },
             isEnabled = checkFieldsFilled(username, email, password)
 
         )
-
+        Spacer(modifier = Modifier.height(10.dp))
         ClickableLoginTextComponent(tryingToLogin = true,
             onTextSelected = {
                 navController.navigate(Screens.loginScreen)

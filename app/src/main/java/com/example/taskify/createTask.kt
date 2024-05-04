@@ -16,11 +16,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -42,6 +40,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -66,7 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.taskify.database.Task
 import com.example.taskify.database.UserRepository
-import com.example.taskify.ui.theme.components.Tags
+import com.example.taskify.components.Tags
 import java.util.*
 
 class TaskAlarm : BroadcastReceiver() {
@@ -154,7 +153,16 @@ private fun showDatePicker(context: Context, calendar: Calendar, onDateSet: () -
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun createTask(navController: NavController, userRepository: UserRepository, userId: Long) {
+fun createTask(navController: NavController, userRepository: UserRepository
+) {
+    val userId = userRepository.getCurrentUserId()
+
+//    val task = if (taskId != -1L) {
+//        taskId?.let { userRepository.getTaskById(it) } ?: Task()
+//    } else {
+//        Task()
+//    }
+
     var title by remember {
         mutableStateOf("")
     }
@@ -484,28 +492,22 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
                 modifier = Modifier.fillMaxWidth()
             )
             {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .background(
-                            color = Color(0xFFD1D0F9),
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                        .height(35.dp)
-                        .width(30.dp)
-                )
-                {
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "delete",
-                            tint = Color(0xFF6368D9),
-                            modifier = Modifier.size(24.dp)
 
-                        )
-                    }
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(
+                        Color(0xFF9C27B0)
+                    ),
+                    onClick = { /*TODO*/ }) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "delete",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
 
+                    )
                 }
+
+
                 Spacer(modifier = Modifier.width(10.dp))
                 ElevatedButton(
                     shape = RoundedCornerShape(20.dp),
@@ -548,9 +550,57 @@ fun createTask(navController: NavController, userRepository: UserRepository, use
                 ){
                     Text(text = "Save task")
                 }
-                }}}
+            }}}
 
 }
+
+fun onSave(
+    context: Context,
+    navController: NavController,
+    userRepository: UserRepository,
+    taskId: Long?,
+    userId: Long,
+    title: String,
+    description: String,
+    date: String,
+    startTime: String,
+    endTime: String,
+    selectedCategory: String,
+    calendarForStartTime: Calendar,
+    calendarForEndTime: Calendar
+) {
+    if (!validateDateTime(calendarForStartTime, calendarForEndTime)) {
+        Toast.makeText(context, "Start time must be before end time.", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    if (selectedCategory.isBlank()) {
+        Toast.makeText(context, "Please select a category.", Toast.LENGTH_SHORT).show()
+        return
+    }
+
+    val newTask = Task(
+        id = taskId,
+        title = title,
+        description = description,
+        date = date,
+        startTime = startTime,
+        endTime = endTime,
+        category = selectedCategory
+    )
+
+    if (taskId == null) {
+        userRepository.insertTask(userId, newTask)
+    } else {
+        userRepository.updateTask(newTask)
+    }
+
+    scheduleNotification(context, title, "Task starts now: $description", calendarForStartTime, 1)
+    scheduleNotification(context, title, "Task ends now: $description", calendarForEndTime, 2)
+
+    navController.popBackStack()
+}
+
 private fun formatDate(calendar: Calendar): String {
     val day = calendar.get(Calendar.DAY_OF_MONTH)
     val month = calendar.get(Calendar.MONTH) + 1
@@ -581,7 +631,6 @@ private fun scheduleNotification(context: Context, title: String,
     val pendingIntent = PendingIntent.getBroadcast(context,requestCode,intent, flags )
     alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 }
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
