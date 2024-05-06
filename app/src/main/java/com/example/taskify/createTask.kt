@@ -77,7 +77,7 @@ class TaskAlarm : BroadcastReceiver() {
             if (description != null) {
                 if (title != null) {
                     showNotification(
-                        context, title, description
+                        context, title, description,
                     )
                 }
             }
@@ -107,13 +107,13 @@ private fun showNotification(context: Context, title:String, desc:String) {
         val builder = Notification.Builder(context, channelId)
         builder.setContentTitle(title)
             .setContentText(desc)
-            .setSmallIcon(R.drawable.emailinbox)
+            .setSmallIcon(R.drawable.notify_task)
             .setAutoCancel(true)
     }
     else{
         builder.setContentTitle(title)
             .setContentText(desc)
-            .setSmallIcon(R.drawable.emailinbox)
+            .setSmallIcon(R.drawable.notify_task)
             .setAutoCancel(true)
     }
 
@@ -157,11 +157,6 @@ fun createTask(navController: NavController, userRepository: UserRepository
 ) {
     val userId = userRepository.getCurrentUserId()
 
-//    val task = if (taskId != -1L) {
-//        taskId?.let { userRepository.getTaskById(it) } ?: Task()
-//    } else {
-//        Task()
-//    }
 
     var title by remember {
         mutableStateOf("")
@@ -208,7 +203,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             modifier = Modifier
                                 .size(30.dp)
                                 .clickable(onClick = {
-                                    navController.navigateUp()
+                                    navController.navigate(Screens.homeScreen)
                                 })
                         )
                         Text(
@@ -267,19 +262,25 @@ fun createTask(navController: NavController, userRepository: UserRepository
                         border = BorderStroke(1.dp, Color.Gray),
                         shape = RoundedCornerShape(2.dp)
                     )
+                    .clickable(
+                        onClick = {
+                            showDatePicker(context, calendarForStartTime) {
+                                date  = formatDate(calendarForStartTime)
+                            }
+                        }
+                    )
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.calendar),
-                    contentDescription = "",
+                    painter = painterResource(id = R.drawable.date),
+                    contentDescription = "date",
                     tint = Color.Blue,
                     modifier = Modifier
                         .size(20.dp)
                         .padding(start = 5.dp)
                 )
 
-                ClickableText(text = buildAnnotatedString {
                     Text(
-                        text = "Date",
+                        text = "Date : ",
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontWeight = FontWeight(500),
@@ -288,25 +289,17 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             letterSpacing = 0.28.sp,
                         )
                     )
-                },
-                    onClick = {
-                        showDatePicker(context, calendarForStartTime) {
-                            date  = formatDate(calendarForStartTime)
-                        }
-                    })
+
                 Text(
-                    text = date.ifEmpty { "Set Date" },
+                    text = date,
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = FontWeight(500),
                         color = Color(0xFF6368D9),
                         textAlign = TextAlign.Center,
                         letterSpacing = 0.28.sp,
-                    )
-                )
-
+                    ))
             }
-
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
@@ -332,7 +325,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.clock),
-                        contentDescription = "",
+                        contentDescription = "clock",
                         tint = Color.Blue,
                         modifier = Modifier
                             .size(25.dp)
@@ -340,7 +333,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                     )
 
                     Text(
-                        text = "Start Time:",
+                        text = "Start Time : ",
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(500),
@@ -493,22 +486,18 @@ fun createTask(navController: NavController, userRepository: UserRepository
             )
             {
 
-                IconButton(
-                    colors = IconButtonDefaults.iconButtonColors(
-                        Color(0xFF9C27B0)
-                    ),
-                    onClick = { /*TODO*/ }) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "delete",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-
-                    )
-                }
-
-
-                Spacer(modifier = Modifier.width(10.dp))
+//                IconButton(
+//                    colors = IconButtonDefaults.iconButtonColors(
+//                        Color(0xFF9C27B0)),
+//
+//                    onClick = { /*TODO*/ }) {
+//                    Icon(
+//                        Icons.Default.Delete,
+//                        contentDescription = "delete",
+//                        tint = Color.White,
+//                        modifier = Modifier.size(24.dp)
+//                    )}
+//                Spacer(modifier = Modifier.width(10.dp))
                 ElevatedButton(
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -531,20 +520,28 @@ fun createTask(navController: NavController, userRepository: UserRepository
                                         description = description
                                     ), userId = userId
                                 )
-                                scheduleNotification(context, title, "Task starts now: $description", calendarForStartTime,1)
-                                scheduleNotification(context, title, "Task ends now: $description", calendarForEndTime,2)
+                                scheduleNotification(context, title,
+                                    "Do your Task: $description",
+                                    calendarForStartTime,1)
 
+                                scheduleNotification(context, title,
+                                    "Hurry Up: $description", calendarForEndTime,2)
+
+                                Toast.makeText(context, "Task Saved", Toast.LENGTH_SHORT).show()
                                 navController.popBackStack()
+
 
                             }
                             else
                             {
-                                Toast.makeText(context, "Please select a category", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Please select a category",
+                                    Toast.LENGTH_SHORT).show()
                             }
 
                         }
                         else{
-                            Toast.makeText(context, "Start time must be before end time", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Start time must be before end time",
+                                Toast.LENGTH_SHORT).show()
                         }
                     }
                 ){
