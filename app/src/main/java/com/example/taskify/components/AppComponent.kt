@@ -294,14 +294,16 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
         })
 }
 @Composable
-fun categories(userRepository: UserRepository,
-               category: String)
+fun categories(
+    userRepository: UserRepository,
+    category:String
+)
 {
-
-
     val tasks = userRepository.getTasksByCategory(category)
 
-    Column(modifier = Modifier) {
+    Column(verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier) {
         if (tasks.isNotEmpty()) {
             LazyColumn {
                 items(tasks) { task ->
@@ -341,7 +343,11 @@ fun categories(userRepository: UserRepository,
                 }
             }
         } else {
-            Text(text = "No tasks found")
+            Column(verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "No tasks found")
+
+            }
         }
     }
 }

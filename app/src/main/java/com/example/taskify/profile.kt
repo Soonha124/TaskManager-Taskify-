@@ -1,5 +1,6 @@
 package com.example.taskify
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,10 +55,10 @@ fun profile(
     userRepository: UserRepository,
 ) {
     val username = userRepository.getUserName()
-
-
+    val userID = userRepository.getCurrentUserId()
+    val exampleTaskId = userRepository.fetchUserTasks(userID).firstOrNull()?.id ?: -1L
     val coroutineScope = rememberCoroutineScope()
-    var navNum by remember {
+    val navNum by remember {
         mutableStateOf(3)
     }
     Scaffold(modifier = Modifier.padding(
@@ -158,7 +159,11 @@ fun profile(
                 if (navNum == 2) {
                     IconButton(
                         onClick = {
-                            navController.navigate("notification")
+                            if (exampleTaskId != -1L) {
+                                navController.navigate("notification/$exampleTaskId")
+                            } else {
+                                Log.d("home navigation", "else block of calender notification")
+                            }
                         },
                         content = {
                             Icon(
@@ -171,7 +176,11 @@ fun profile(
                 } else {
                     IconButton(
                         onClick = {
-                            navController.navigate("notification")
+                            if (exampleTaskId != -1L) {
+                                navController.navigate("notification/$exampleTaskId")
+                            } else {
+                                Log.d("home navigation", "else block of profile notification")
+                            }
                         },
                         content = {
                             Icon(
@@ -247,23 +256,6 @@ fun profile(
                                 letterSpacing = 0.28.sp,
                             )
                         )
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(15.dp)
-                                    .weight(2f),
-                                text = "You have Completed\n 103 task!",
-                                style = TextStyle(
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    textAlign = TextAlign.Center,
-                                    letterSpacing = 0.28.sp,
-                                )
-                            )
                             Image(
                                 painter = painterResource(id = R.drawable.splash),
                                 contentDescription = "",
@@ -271,7 +263,7 @@ fun profile(
                                     .weight(2f)
                                     .size(150.dp),
                             )
-                        }
+
 //
                         ElevatedButton(shape = RoundedCornerShape(
                             topEnd = 20.dp,

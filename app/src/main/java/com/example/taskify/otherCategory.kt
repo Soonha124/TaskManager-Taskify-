@@ -70,7 +70,8 @@ fun otherCategory(navController: NavController,
     })
 }) { innerPadding ->
     Column(modifier = Modifier.padding(innerPadding)){
-        categories(userRepository = userRepository,
+        categories(
+            userRepository = userRepository,
             category = "Other")
 
     }

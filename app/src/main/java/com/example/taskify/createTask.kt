@@ -1,5 +1,6 @@
 package com.example.taskify
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.DatePickerDialog
@@ -11,6 +12,7 @@ import android.app.TimePickerDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -21,7 +23,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,17 +31,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -56,12 +53,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.navigation.NavController
 import com.example.taskify.database.Task
 import com.example.taskify.database.UserRepository
@@ -73,11 +72,12 @@ class TaskAlarm : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val title = intent.getStringExtra("NOTIFICATION_TITLE")
         val description = intent.getStringExtra("NOTIFICATION_CONTENT")
+        val taskId = intent.getLongExtra("taskId", -1)
         try {
             if (description != null) {
                 if (title != null) {
                     showNotification(
-                        context, title, description,
+                        context, title, description, taskId
                     )
                 }
             }
@@ -94,33 +94,106 @@ class TaskAlarm : BroadcastReceiver() {
 }
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
-private fun showNotification(context: Context, title:String, desc:String) {
-    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+private fun showNotification(context: Context, title: String, desc: String, taskId: Long) {
+    val intent = Intent(context, MainActivity::class.java).apply {
+        putExtra("navDestination", Screens.notification)
+        putExtra("taskId", taskId)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    }
+
+    val pendingIntent = PendingIntent.getActivity(context, taskId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
     val channelId = "message_channel"
-    val channelName = "message_name"
-    val builder = Notification.Builder(context)
-
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(channelId, channelName, importance)
-        manager.createNotificationChannel(channel)
-        val builder = Notification.Builder(context, channelId)
-        builder.setContentTitle(title)
-            .setContentText(desc)
-            .setSmallIcon(R.drawable.notify_task)
-            .setAutoCancel(true)
-    }
-    else{
-        builder.setContentTitle(title)
-            .setContentText(desc)
-            .setSmallIcon(R.drawable.notify_task)
-            .setAutoCancel(true)
+        val channel = NotificationChannel(channelId, "message_name", NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
     }
 
+    val notification = NotificationCompat.Builder(context, channelId)
+        .setContentTitle(title)
+        .setContentText(desc)
+        .setSmallIcon(R.drawable.notify_task)
+        .setContentIntent(pendingIntent)
+        .setAutoCancel(true)
+        .build()
 
-    val notificationId = System.currentTimeMillis().toInt()
-    manager.notify(notificationId, builder.build())
+
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) != PackageManager.PERMISSION_GRANTED
+    ) {
+        // TODO: Consider calling
+        //    ActivityCompat#requestPermissions
+        // here to request the missing permissions, and then overriding
+        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+        //                                          int[] grantResults)
+        // to handle the case where the user grants the permission. See the documentation
+        // for ActivityCompat#requestPermissions for more details.
+        return
+    }
+    NotificationManagerCompat.from(context).notify(taskId.toInt(), notification)
 }
+
+
+//private fun showNotification(context: Context, title:String, desc:String, taskId: Long) {
+//    val intent = Intent(context, MainActivity::class.java)
+//    intent.putExtra("openFragment", "notificationFragment")
+//    intent.putExtra("taskId", taskId)
+//
+//    val pendingIntent = PendingIntent.getActivity(context, taskId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//
+//    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//    val channelId = "message_channel"
+//    val channelName = "message_name"
+//    val builder = Notification.Builder(context)
+//
+//    val notificationBuilder = NotificationCompat.Builder(context, channelId)
+//        .setContentTitle(title)
+//        .setContentText(desc)
+//        .setSmallIcon(R.drawable.notify_task)
+//        .setContentIntent(pendingIntent)
+//        .setAutoCancel(true)
+//
+//    val notificationManager = NotificationManagerCompat.from(context)
+//    if (ActivityCompat.checkSelfPermission(
+//            context,
+//            Manifest.permission.POST_NOTIFICATIONS
+//        ) != PackageManager.PERMISSION_GRANTED
+//    ) {
+//        // TODO: Consider calling
+//        //    ActivityCompat#requestPermissions
+//        // here to request the missing permissions, and then overriding
+//        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//        //                                          int[] grantResults)
+//        // to handle the case where the user grants the permission. See the documentation
+//        // for ActivityCompat#requestPermissions for more details.
+//        return
+//    }
+//    notificationManager.notify(taskId.toInt(), notificationBuilder.build())
+//
+////    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+////        val importance = NotificationManager.IMPORTANCE_DEFAULT
+////        val channel = NotificationChannel(channelId, channelName, importance)
+////        manager.createNotificationChannel(channel)
+////        val builder = Notification.Builder(context, channelId)
+////        builder.setContentTitle(title)
+////            .setContentText(desc)
+////            .setSmallIcon(R.drawable.notify_task)
+////            .setAutoCancel(true)
+////    }
+////    else{
+////        builder.setContentTitle(title)
+////            .setContentText(desc)
+////            .setSmallIcon(R.drawable.notify_task)
+////            .setAutoCancel(true)
+////    }
+////
+////
+////    val notificationId = System.currentTimeMillis().toInt()
+////    manager.notify(notificationId, builder.build())
+//}
 
 private fun showTimePicker(context: Context, calendar: Calendar, onTimeSet: () -> Unit) {
     TimePickerDialog(
@@ -132,7 +205,7 @@ private fun showTimePicker(context: Context, calendar: Calendar, onTimeSet: () -
         },
         calendar.get(Calendar.HOUR_OF_DAY),
         calendar.get(Calendar.MINUTE),
-        true
+        false
     ).show()
 }
 

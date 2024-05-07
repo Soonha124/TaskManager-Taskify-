@@ -1,33 +1,25 @@
 package com.example.taskify
 
-import androidx.activity.OnBackPressedDispatcher
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -41,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -56,10 +49,13 @@ import com.example.taskify.components.CategoryCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun homeScreen(navController: NavController, userRepository: UserRepository) {
-    var navNum by remember {
+fun homeScreen(navController: NavController, userRepository: UserRepository)
+{
+    val navNum by remember {
         mutableStateOf(0)
     }
+    val userID = userRepository.getCurrentUserId()
+    val exampleTaskId = userRepository.fetchUserTasks(userID).firstOrNull()?.id ?: -1L
     val userId = navController.previousBackStackEntry?.arguments?.getLong("userId") ?: -1L
 
     val username = userRepository.getUserName()
@@ -155,7 +151,11 @@ fun homeScreen(navController: NavController, userRepository: UserRepository) {
                 }
                 IconButton(
                     onClick = {
-                        navController.navigate("notification")
+        if (exampleTaskId != -1L) {
+            navController.navigate("notification/$exampleTaskId")
+        } else {
+            Log.d("home navigation", "else block of home notification")
+        }
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.notification),
@@ -188,40 +188,6 @@ fun homeScreen(navController: NavController, userRepository: UserRepository) {
                 .padding(all = 20.dp)
                 .padding(innerPadding)
         ) {
-            Text(
-                text = "Let’s check out your today’s task",
-                style = TextStyle(
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF6368D9),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.24.sp,
-                )
-            )
-            ElevatedCard(
-                colors = CardDefaults.cardColors(
-                    Color(0xFF6368D9)
-                ),
-                modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth()
-            ) {
-                LinearProgressIndicator(
-                    progress = { 0.45f },
-                    modifier = Modifier
-                        .padding(
-                            top = 30.dp,
-                            start = 20.dp
-                        )
-                        .height(5.dp)
-                        .shadow(
-                            elevation = 5.dp,
-                            shape = RoundedCornerShape(2.dp)
-                        ),
-                    color = Color(0xFFEEEFFF),
-                    trackColor = Color(0xFFCDCFEE),
-                )
-            }
             Text(
                 text = "Task categories",
                 style = TextStyle(

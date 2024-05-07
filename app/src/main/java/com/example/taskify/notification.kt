@@ -1,20 +1,26 @@
 package com.example.taskify
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,13 +35,33 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
+import com.example.taskify.database.Task
+import com.example.taskify.database.UserRepository
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun notification(navController: NavController) {
+fun notification(
+    navController: NavController,
+    userRepository: UserRepository,
+    taskId: Long)
+{
+
+    val taskList = remember { mutableStateOf(listOf<Task>()) }
+    val selectedTask = remember(taskId) { taskList.value.find { it.id == taskId } }
+
+    val userId = userRepository.getCurrentUserId()
+    val task by remember(taskId) { mutableStateOf(userRepository.getTaskById(taskId)) }
+    val exampleTaskId = userRepository.fetchUserTasks(userId).firstOrNull()?.id ?: -1L
+
+    LaunchedEffect(key1 = taskId) {
+        taskList.value =
+            userRepository.fetchUserTasks(userId)
+    }
     val navNum by remember {
         mutableStateOf(2)
     }
+
+
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
         bottom = 10.dp
@@ -72,6 +98,7 @@ fun notification(navController: NavController) {
                             tint = Color(0xFF6368D9),
                             modifier = Modifier.size(30.dp)
                         )
+
                     }
                 } else {
                     IconButton(
@@ -114,7 +141,11 @@ fun notification(navController: NavController) {
                 if (navNum == 2) {
                     IconButton(enabled = true,
                         onClick = {
-                            navController.navigate("notification")
+                            if (exampleTaskId != -1L) {
+                                navController.navigate("notification/$exampleTaskId")
+                            } else {
+                                Log.d("home navigation", "else block of home notification")
+                            }
                         }) {
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
@@ -126,7 +157,11 @@ fun notification(navController: NavController) {
                 } else {
                     IconButton(enabled = false,
                         onClick = {
-                            navController.navigate("notification")
+                            if (exampleTaskId != -1L) {
+                                navController.navigate("notification/$exampleTaskId")
+                            } else {
+                                Log.d("notification navigation", "else block of notification to notification")
+                            }
                         }) {
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
@@ -164,101 +199,58 @@ fun notification(navController: NavController) {
 
             }
 
-        }
-    ) { innerPadding ->
-        Column(
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+        })
+    {innerPadding->
+        Column(verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(all = 20.dp)
-        )
+            modifier = Modifier.padding(innerPadding))
         {
-            Text(
-                modifier = Modifier.padding(top = 10.dp),
-                text = "Today",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF6368D9),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.28.sp
-                )
-            )
+            if (task != null)
+        {
+            LazyColumn(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                    items(taskList.value) { task ->
+                        NotificationItem(
+                            task = task,
+                            isSelected = task.id == selectedTask?.id
+                        )
+                    }
+            }
+        }
+            else
+            {
+                Column(verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "Nothing to Show")
+                }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(66.dp)
-                    .background(
-                        color = Color(0xFF6368D9),
-                        shape = RoundedCornerShape(size = 15.dp)
-                    )
-            )
-            {
-                Text(
-                    modifier = Modifier.padding(
-                        top = 10.dp,
-                        start = 10.dp, bottom = 20.dp
-                    ),
-                    text = "5 mint ago",
-                    style = TextStyle(
-                        color = Color.White
-                    )
-                )
-                Text(
-                    modifier = Modifier.padding(
-                        top = 25.dp,
-                        start = 10.dp,
-                    ),
-                    text = "Project Proposal has been submitted",
-                    style = TextStyle(
-                        color = Color.White
-                    )
-                )
             }
-            Text(
-                modifier = Modifier.padding(top = 10.dp),
-                text = "Yesterday",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF6368D9),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.28.sp
-                )
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(66.dp)
-                    .background(
-                        color = Color(0xFF6368D9),
-                        shape = RoundedCornerShape(size = 15.dp)
-                    )
-            )
-            {
-                Text(
-                    modifier = Modifier.padding(
-                        top = 10.dp,
-                        start = 10.dp, bottom = 20.dp
-                    ),
-                    text = "36 hours ago",
-                    style = TextStyle(
-                        color = Color.White
-                    )
-                )
-                Text(
-                    modifier = Modifier.padding(
-                        top = 25.dp,
-                        start = 10.dp,
-                    ),
-                    text = "Project Proposal has been submitted",
-                    style = TextStyle(
-                        color = Color.White
-                    )
-                )
-            }
+
+        }
+    }
+
+}
+
+@Composable
+fun NotificationItem(task: Task, isSelected: Boolean) {
+    ElevatedCard(
+        shape = RoundedCornerShape(topEnd = 30.dp,
+            bottomStart = 30.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(if (isSelected)
+                Color(0xFF6368D9) else Color(0xFF43463f))
+
+    ) {
+        Column(modifier = Modifier.padding(16.dp))
+        {
+            Text(text = task.title,
+                style = TextStyle(fontWeight = FontWeight.Bold))
+            Text(text = task.description)
+            Text(text = task.date)
         }
     }
 }
@@ -266,5 +258,4 @@ fun notification(navController: NavController) {
 @Preview(showSystemUi = true)
 @Composable
 fun notificationPreview() {
-    notification(rememberNavController())
 }

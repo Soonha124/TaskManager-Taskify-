@@ -1,5 +1,6 @@
 package com.example.taskify
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.taskify.database.UserRepository
 
 data class Taskk(
     val category: String,
@@ -49,8 +51,8 @@ val taskList = listOf(
     Taskk("Work", "Prepare presentaion", 3),
     Taskk("Other", "Prepare presentaion", 3),
     Taskk("Gym", "Prepare presentaion", 3),
-    Taskk("Personal Projects", "Prepare presentaion", 3),
-    Taskk("University Stuff", "Prepare presentaion", 3),
+    Taskk("Personal Projects", "Prepare presentation", 3),
+    Taskk("University Stuff", "Prepare presentation", 3),
     Taskk("University Stuff", "Prepare presentaion", 3),
     Taskk("University Stuff", "Prepare presentaion", 3),
     Taskk("University Stuff", "Prepare presentaion", 3),
@@ -62,7 +64,11 @@ val taskList = listOf(
     )
 
 @Composable
-fun calender(navController: NavController) {
+fun calender(navController: NavController, userRepository: UserRepository) {
+
+    val userID = userRepository.getCurrentUserId()
+    val exampleTaskId = userRepository.fetchUserTasks(userID).firstOrNull()?.id ?: -1L
+
     val navNum by remember {
         mutableStateOf(1)
     }
@@ -130,7 +136,11 @@ fun calender(navController: NavController) {
                 if (navNum == 2) {
                     IconButton(
                         onClick = {
-                            navController.navigate("notification")
+                            if (exampleTaskId != -1L) {
+                                navController.navigate("notification/$exampleTaskId")
+                            } else {
+                                Log.d("home navigation", "else block of calender notification")
+                            }
                         }) {
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
@@ -142,7 +152,11 @@ fun calender(navController: NavController) {
                 } else {
                     IconButton(
                         onClick = {
-                            navController.navigate("notification")
+                            if (exampleTaskId != -1L) {
+                                navController.navigate("notification/$exampleTaskId")
+                            } else {
+                                Log.d("home navigation", "else block of calender notification")
+                            }
                         }) {
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
@@ -275,5 +289,5 @@ fun calender(navController: NavController) {
 @Preview
 @Composable
 fun previewCalender() {
-    calender(rememberNavController())
+//    calender(rememberNavController())
 }

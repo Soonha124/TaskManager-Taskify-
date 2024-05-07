@@ -10,7 +10,17 @@ import android.util.Log
 
 class UserRepository(private val context: Context,private val dbHelper: UserDbHelper)
 {
-   fun registerUser(username:String, email:String, password:String): Boolean
+    private val sharedPreferences = context.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+
+    fun isLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean("isLoggedIn", false)
+    }
+
+    fun setLoggedIn(loggedIn: Boolean) {
+        sharedPreferences.edit().putBoolean("isLoggedIn", loggedIn).apply()
+    }
+
+    fun registerUser(username:String, email:String, password:String): Boolean
     {
 
         val db = dbHelper.writableDatabase
@@ -26,6 +36,7 @@ class UserRepository(private val context: Context,private val dbHelper: UserDbHe
             if (newRowId == -1L) {
                 return false
             }
+
 
             saveUserId(newRowId)
             saveUserEmail(email)
@@ -82,6 +93,7 @@ class UserRepository(private val context: Context,private val dbHelper: UserDbHe
             saveUserId(userId)
             saveUserEmail(email)
             saveUserPassword(password)
+            setLoggedIn(true)
             cursor.close()
             db.close()
             true
@@ -115,6 +127,8 @@ class UserRepository(private val context: Context,private val dbHelper: UserDbHe
 //        editor.apply()
 //    }
 fun logoutUser() {
+    clearUserData()
+    setLoggedIn(false)
     val sharedPreferences = context.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.clear()
