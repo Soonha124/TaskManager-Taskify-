@@ -203,7 +203,8 @@ fun getUserId(): Long {
     return sharedPreferences.getLong("userId", -1)
 }
     fun insertTask(userId: Long, task: Task): Boolean {
-        if (userId == -1L) {
+        if (userId == -1L)
+        {
             Log.d("TaskInsertion", "Task ${task.title} inserted for User ID $userId")
             Log.e("TaskInsertion", "Invalid user ID: $userId")
             return false
@@ -228,10 +229,16 @@ fun getUserId(): Long {
             }
             db.setTransactionSuccessful()
             return true
-        } catch (e: SQLiteException) {
-            Log.e("TaskInsertion", "Error inserting task", e)
+        }
+        catch (e: SQLiteException)
+        {
+            Log.e("TaskInsertion",
+                "Error inserting task", e)
             return false
-        } finally {
+
+        }
+        finally
+        {
             db.endTransaction()
             db.close()
         }

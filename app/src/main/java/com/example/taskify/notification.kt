@@ -6,15 +6,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -61,7 +60,6 @@ fun notification(
         mutableStateOf(2)
     }
 
-
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
         bottom = 10.dp
@@ -87,7 +85,6 @@ fun notification(
                 modifier = Modifier.fillMaxWidth()
             )
             {
-                if (navNum == 0) {
                     IconButton(
                         onClick = {
                             navController.navigate("homeScreen")
@@ -95,50 +92,10 @@ fun notification(
                         Icon(
                             painterResource(id = R.drawable.home),
                             contentDescription = "",
-                            tint = Color(0xFF6368D9),
+                            tint = if(navNum == 0)Color(0xFF020CDF) else Color(0xFFA0A4FF),
                             modifier = Modifier.size(30.dp)
-                        )
-
-                    }
-                } else {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("homeScreen")
-                        }) {
-                        Icon(
-                            painterResource(id = R.drawable.home),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
-                if (navNum == 1) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("calender")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calendar),
-                            contentDescription = "",
-                            tint = Color(0xFF6368D9),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("calender")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.calendar),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
-                if (navNum == 2) {
+                        ) }
+//
                     IconButton(enabled = true,
                         onClick = {
                             if (exampleTaskId != -1L) {
@@ -150,53 +107,22 @@ fun notification(
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
                             contentDescription = "",
-                            tint = Color(0xFF6368D9),
+                            tint = if (navNum == 3) Color(0xFF020CDF) else Color(0xFFA0A4FF),
                             modifier = Modifier.size(30.dp)
                         )
                     }
-                } else {
-                    IconButton(enabled = false,
-                        onClick = {
-                            if (exampleTaskId != -1L) {
-                                navController.navigate("notification/$exampleTaskId")
-                            } else {
-                                Log.d("notification navigation", "else block of notification to notification")
-                            }
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.notification),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
-                if (navNum == 3) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("profile")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "",
-                            tint = Color(0xFF6368D9),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("profile")
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.profile),
-                            contentDescription = "",
-                            tint = Color(0xFFA0A4FF),
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-                }
 
+                IconButton(
+                    onClick = {
+                        navController.navigate(Screens.profile)
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = "",
+                        tint = if (navNum == 3) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                        modifier = Modifier.size(30.dp)
+                    )
+                }
             }
 
         })
@@ -211,7 +137,8 @@ fun notification(
                 modifier = Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                    items(taskList.value) { task ->
+                    items(taskList.value)
+                    { task ->
                         NotificationItem(
                             task = task,
                             isSelected = task.id == selectedTask?.id
@@ -222,7 +149,8 @@ fun notification(
             else
             {
                 Column(verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    horizontalAlignment = Alignment.CenterHorizontally)
+                {
                     Text(text = "Nothing to Show")
                 }
 
@@ -234,25 +162,37 @@ fun notification(
 }
 
 @Composable
-fun NotificationItem(task: Task, isSelected: Boolean) {
-    ElevatedCard(
-        shape = RoundedCornerShape(topEnd = 30.dp,
-            bottomStart = 30.dp),
+fun NotificationItem(task: Task,
+                     isSelected: Boolean)
+{
+    Card(shape =  RoundedCornerShape(
+        topEnd = 30.dp,
+        bottomStart = 30.dp),
+        colors = CardDefaults.cardColors(
+            Color(0xFF6368D9)
+        ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
-            .background(if (isSelected)
-                Color(0xFF6368D9) else Color(0xFF43463f))
-
-    ) {
-        Column(modifier = Modifier.padding(16.dp))
+            .padding(8.dp))
+    {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(16.dp))
         {
             Text(text = task.title,
-                style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = task.description)
-            Text(text = task.date)
+                color = Color.White,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold))
+
+            Text(text = task.description,
+                color = Color.White)
+
+            Text(text = task.date,
+                color = Color.White)
+
         }
     }
+
 }
 
 @Preview(showSystemUi = true)

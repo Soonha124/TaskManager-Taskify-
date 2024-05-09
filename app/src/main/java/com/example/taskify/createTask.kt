@@ -137,63 +137,6 @@ private fun showNotification(context: Context, title: String, desc: String, task
 }
 
 
-//private fun showNotification(context: Context, title:String, desc:String, taskId: Long) {
-//    val intent = Intent(context, MainActivity::class.java)
-//    intent.putExtra("openFragment", "notificationFragment")
-//    intent.putExtra("taskId", taskId)
-//
-//    val pendingIntent = PendingIntent.getActivity(context, taskId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
-//
-//    val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//    val channelId = "message_channel"
-//    val channelName = "message_name"
-//    val builder = Notification.Builder(context)
-//
-//    val notificationBuilder = NotificationCompat.Builder(context, channelId)
-//        .setContentTitle(title)
-//        .setContentText(desc)
-//        .setSmallIcon(R.drawable.notify_task)
-//        .setContentIntent(pendingIntent)
-//        .setAutoCancel(true)
-//
-//    val notificationManager = NotificationManagerCompat.from(context)
-//    if (ActivityCompat.checkSelfPermission(
-//            context,
-//            Manifest.permission.POST_NOTIFICATIONS
-//        ) != PackageManager.PERMISSION_GRANTED
-//    ) {
-//        // TODO: Consider calling
-//        //    ActivityCompat#requestPermissions
-//        // here to request the missing permissions, and then overriding
-//        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//        //                                          int[] grantResults)
-//        // to handle the case where the user grants the permission. See the documentation
-//        // for ActivityCompat#requestPermissions for more details.
-//        return
-//    }
-//    notificationManager.notify(taskId.toInt(), notificationBuilder.build())
-//
-////    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-////        val importance = NotificationManager.IMPORTANCE_DEFAULT
-////        val channel = NotificationChannel(channelId, channelName, importance)
-////        manager.createNotificationChannel(channel)
-////        val builder = Notification.Builder(context, channelId)
-////        builder.setContentTitle(title)
-////            .setContentText(desc)
-////            .setSmallIcon(R.drawable.notify_task)
-////            .setAutoCancel(true)
-////    }
-////    else{
-////        builder.setContentTitle(title)
-////            .setContentText(desc)
-////            .setSmallIcon(R.drawable.notify_task)
-////            .setAutoCancel(true)
-////    }
-////
-////
-////    val notificationId = System.currentTimeMillis().toInt()
-////    manager.notify(notificationId, builder.build())
-//}
 
 private fun showTimePicker(context: Context, calendar: Calendar, onTimeSet: () -> Unit) {
     TimePickerDialog(
