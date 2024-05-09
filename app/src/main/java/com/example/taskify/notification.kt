@@ -158,9 +158,7 @@ fun notification(
 
         }
     }
-
 }
-
 @Composable
 fun NotificationItem(task: Task,
                      isSelected: Boolean)
