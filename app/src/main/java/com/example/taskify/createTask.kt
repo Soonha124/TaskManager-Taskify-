@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -198,12 +199,10 @@ fun createTask(navController: NavController, userRepository: UserRepository
     val calendarForEndTime = Calendar.getInstance()
 
 
-
-
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
-        bottom = 10.dp
-    ),
+        bottom = 10.dp),
+
         topBar = {
             TopAppBar(
                 title = {
@@ -245,7 +244,8 @@ fun createTask(navController: NavController, userRepository: UserRepository
                 .padding(all = 20.dp)
         ) {
             OutlinedTextField(modifier = Modifier.fillMaxWidth(),
-                placeholder = {
+                placeholder =
+                {
                     Text(
                         text = "Title",
                         style = TextStyle(
@@ -280,20 +280,21 @@ fun createTask(navController: NavController, userRepository: UserRepository
                     )
                     .clickable(
                         onClick = {
-                            showDatePicker(context, calendarForStartTime) {
-                                date  = formatDate(calendarForStartTime)
+                            showDatePicker(context, calendarForStartTime)
+                            {
+                                date = formatDate(calendarForStartTime)
                             }
                         }
-                    )
-            ) {
+                    ))
+            {
                 Icon(
-                    painter = painterResource(id = R.drawable.date),
+                    painter = painterResource(
+                        id = R.drawable.date),
                     contentDescription = "date",
                     tint = Color.Blue,
                     modifier = Modifier
-                        .size(20.dp)
-                        .padding(start = 5.dp)
-                )
+                        .size(25.dp)
+                        .padding(start = 5.dp))
 
                     Text(
                         text = "Date : ",
@@ -377,7 +378,8 @@ fun createTask(navController: NavController, userRepository: UserRepository
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp)
-                        .border(
+                        .border
+                            (
                             border = BorderStroke(1.dp, Color.Gray),
                             shape = RoundedCornerShape(2.dp)
                         )
@@ -386,10 +388,11 @@ fun createTask(navController: NavController, userRepository: UserRepository
                                 endTime = formatTime(calendarForEndTime)
                             }
                         })
-                ) {
+                )
+                {
                     Icon(
                         painter = painterResource(id = R.drawable.clock),
-                        contentDescription = "",
+                        contentDescription = "clock",
                         tint = Color.Blue,
                         modifier = Modifier
                             .size(25.dp)
@@ -402,7 +405,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             fontWeight = FontWeight(500),
                             color = Color(0xFF6368D9),
                             textAlign = TextAlign.Center,
-                            letterSpacing = 0.28.sp,
+                            letterSpacing = 0.28.sp
                         )
                     )
                     Text(
@@ -414,18 +417,13 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             textAlign = TextAlign.Center,
                             letterSpacing = 0.28.sp,
                         )
-                    )
-
-                }
-
+                    ) }
             }
-            LazyColumn(
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             )
             {
-                item {
-
                     Text(
                         modifier = Modifier.align(Alignment.Start),
                         text = "Select a Category",
@@ -437,41 +435,74 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             letterSpacing = 0.28.sp,
                         )
                     )
-                }
-                item {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(5.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally)
+                {
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     )
                     {
-                        Tags(
-                            label = "Work",
-                            modifier = Modifier
-                                .width(115.dp)
-                                .clickable {
-                                    selectedCategory = "Work"
-                                },
-                            selected = selectedCategory == "Work",
-                            onTagClicked = { selectedCategory = "Work" }
-                        )
-                        Tags(label = "Study",
-                            modifier = Modifier
-                                .width(115.dp)
-                                .clickable { selectedCategory = "Study" },
-                            selected = selectedCategory == "Study",
-                            onTagClicked = { selectedCategory = "Study" }
-                        )
-                        Tags(label = "Other",
-                            modifier = Modifier
-                                .width(115.dp)
-                                .clickable { selectedCategory = "Other" },
-                            selected = selectedCategory == "Other",
-                            onTagClicked = { selectedCategory = "Other" }
-                        )
+
+                        item {
+                            Tags(
+                                label = "Work",
+                                modifier = Modifier
+                                    .width(115.dp)
+                                    .clickable {
+                                        selectedCategory = "Work"
+                                    },
+                                selected = selectedCategory == "Work",
+                                onTagClicked = { selectedCategory = "Work" }
+                            )
+                        }
+                        item{
+                            Tags(label = "Study",
+                                modifier = Modifier
+                                    .width(115.dp)
+                                    .clickable { selectedCategory = "Study" },
+                                selected = selectedCategory == "Study",
+                                onTagClicked = { selectedCategory = "Study" }
+                            )
+                        }
+                        item {
+                            Tags(
+                                label = "Home",
+                                modifier = Modifier
+                                    .width(115.dp)
+                                    .clickable {
+                                        selectedCategory = "Home"
+                                    },
+                                selected = selectedCategory == "Home",
+                                onTagClicked = { selectedCategory = "Home" }
+                            )
+                        }
+                        item {
+                            Tags(
+                                label = "Personal Project",
+                                modifier = Modifier
+                                    .width(215.dp)
+                                    .clickable {
+                                        selectedCategory = "Personal Project"
+                                    },
+                                selected = selectedCategory == "Personal Project",
+                                onTagClicked = { selectedCategory = "Personal Project" }
+                            )
+                        }
+                        item {
+                            Tags(label = "Other",
+                                modifier = Modifier
+                                    .width(115.dp)
+                                    .clickable { selectedCategory = "Other" },
+                                selected = selectedCategory == "Other",
+                                onTagClicked = { selectedCategory = "Other" }
+                            )
+                        }
                     }
                 }
-
             }
 
             OutlinedTextField(
@@ -479,7 +510,8 @@ fun createTask(navController: NavController, userRepository: UserRepository
                     .fillMaxWidth()
                     .weight(1f),
                 maxLines = 200,
-                placeholder = {
+                placeholder =
+                {
                     Text(
                         text = "Description",
                         style = TextStyle(
@@ -515,7 +547,8 @@ fun createTask(navController: NavController, userRepository: UserRepository
 //                    )}
 //                Spacer(modifier = Modifier.width(10.dp))
                 ElevatedButton(
-                    shape = RoundedCornerShape(20.dp),
+                    shape = RoundedCornerShape(topEnd = 30.dp,
+                        bottomStart = 30.dp),
                     colors = ButtonDefaults.buttonColors(
                         contentColor = Color.White,
                         containerColor = Color(0xFF6368D9)
@@ -567,52 +600,6 @@ fun createTask(navController: NavController, userRepository: UserRepository
 
 }
 
-fun onSave(
-    context: Context,
-    navController: NavController,
-    userRepository: UserRepository,
-    taskId: Long?,
-    userId: Long,
-    title: String,
-    description: String,
-    date: String,
-    startTime: String,
-    endTime: String,
-    selectedCategory: String,
-    calendarForStartTime: Calendar,
-    calendarForEndTime: Calendar
-) {
-    if (!validateDateTime(calendarForStartTime, calendarForEndTime)) {
-        Toast.makeText(context, "Start time must be before end time.", Toast.LENGTH_SHORT).show()
-        return
-    }
-
-    if (selectedCategory.isBlank()) {
-        Toast.makeText(context, "Please select a category.", Toast.LENGTH_SHORT).show()
-        return
-    }
-
-    val newTask = Task(
-        id = taskId,
-        title = title,
-        description = description,
-        date = date,
-        startTime = startTime,
-        endTime = endTime,
-        category = selectedCategory
-    )
-
-    if (taskId == null) {
-        userRepository.insertTask(userId, newTask)
-    } else {
-        userRepository.updateTask(newTask)
-    }
-
-    scheduleNotification(context, title, "Task starts now: $description", calendarForStartTime, 1)
-    scheduleNotification(context, title, "Task ends now: $description", calendarForEndTime, 2)
-
-    navController.popBackStack()
-}
 
 private fun formatDate(calendar: Calendar): String {
     val day = calendar.get(Calendar.DAY_OF_MONTH)

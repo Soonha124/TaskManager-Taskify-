@@ -2,6 +2,7 @@ package com.example.taskify
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -46,9 +47,13 @@ class MainActivity : ComponentActivity() {
                 {
                     val destination = intent.getStringExtra("navDestination")
                     val taskId = intent.getLongExtra("taskId", -1L)
-
                     if (destination != null && taskId != -1L) {
-                        navigateToDestination(navController, destination, taskId)
+                        if (userRepository.isLoggedIn()) {
+                            Log.d("if condition", "checked for userLogged in")
+                            navigateToDestination(navController, destination, taskId)
+                        } else {
+                            navController.navigate(Screens.splashScreen)
+                        }
                     } else {
                         AppNavigation(navController, navigationViewModel, userRepository)
                     }
@@ -60,10 +65,12 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun navigateToDestination(
         navController: NavHostController,
-        destination: String, taskId: Long,
+        destination: String,
+        taskId: Long,
     ) {
         LaunchedEffect(key1 = taskId) {
             navController.navigate("$destination/$taskId") {
+
                 popUpTo(navController.graph.findStartDestination().id) {
                     saveState = true
                 }

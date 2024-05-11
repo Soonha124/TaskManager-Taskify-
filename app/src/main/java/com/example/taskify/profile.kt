@@ -53,7 +53,7 @@ fun profile(
     val exampleTaskId = userRepository.fetchUserTasks(userID).firstOrNull()?.id ?: -1L
     val coroutineScope = rememberCoroutineScope()
     val navNum by remember {
-        mutableStateOf(3)
+        mutableStateOf(2)
     }
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
@@ -126,7 +126,7 @@ fun profile(
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
                             contentDescription = "",
-                            tint = if (navNum == 2) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                            tint = if (navNum == 1) Color(0xFF020CDF) else Color(0xFFA0A4FF),
                             modifier = Modifier.size(30.dp)
                         )
                     })
@@ -138,7 +138,7 @@ fun profile(
                         Icon(
                             painter = painterResource(id = R.drawable.profile),
                             contentDescription = "",
-                            tint = if (navNum == 3) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                            tint = if (navNum == 2) Color(0xFF020CDF) else Color(0xFFA0A4FF),
                             modifier = Modifier.size(30.dp)
                         )
                     })
@@ -262,10 +262,12 @@ fun profile(
                                 userRepository.logoutUser()
 //                                    userRepository.clearUserData()
                                 navController.navigate(Screens.loginScreen) {
+                                    Log.d("profile Screen ", "Logged Out")
                                     popUpTo(navController.graph.startDestinationId) {
                                         inclusive = true
                                     }
                                 }
+
                             }
                         }
 

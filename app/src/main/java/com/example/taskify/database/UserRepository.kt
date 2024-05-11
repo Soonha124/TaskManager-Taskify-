@@ -16,7 +16,7 @@ class UserRepository(private val context: Context,private val dbHelper: UserDbHe
         return sharedPreferences.getBoolean("isLoggedIn", false)
     }
 
-    fun setLoggedIn(loggedIn: Boolean) {
+    private fun setLoggedIn(loggedIn: Boolean) {
         sharedPreferences.edit().putBoolean("isLoggedIn", loggedIn).apply()
     }
 
@@ -78,7 +78,6 @@ class UserRepository(private val context: Context,private val dbHelper: UserDbHe
 
         val selection = "${UserContract.UserEntry.COLUMN_USERNAME} = ? AND ${UserContract.UserEntry.COLUMN_EMAIL} = ? AND ${UserContract.UserEntry.COLUMN_PASSWORD} = ?"
         val selectionArgs = arrayOf(username,email, password)
-
         val cursor = db.query(
             UserContract.UserEntry.TABLE_NAME,
             arrayOf(BaseColumns._ID),
@@ -135,8 +134,8 @@ fun logoutUser() {
     editor.apply()
 }
 
-    fun saveUserName(username: String){
-
+    fun saveUserName(username: String)
+    {
         val sharedPreferences :SharedPreferences = context.getSharedPreferences("user_pref",
             Context.MODE_PRIVATE)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
@@ -243,44 +242,7 @@ fun getUserId(): Long {
             db.close()
         }
 
-//        return newRowId != -1L
     }
-//    fun insertTask(userId: Long, task: Task): Boolean
-//    {
-//        val db = dbHelper.writableDatabase
-//        if (userId == -1L) {
-//            Log.e("TaskInsertion", "Invalid user ID: $userId")
-//            return false
-//        }
-////        val userId = getCurrentUserId() ?: return false
-//        Log.d("TaskInsertion", "Inserting task for user ID: $userId")
-//        Log.d("TaskInsertion", "Task details: $task")
-//
-//        val values = ContentValues().apply {
-//            put(TaskContract.TaskEntry.COLUMN_ID, userId)
-//            put(TaskContract.TaskEntry.COLUMN_TITLE, task.title)
-//            put(TaskContract.TaskEntry.COLUMN_DESCRIPTION, task.description)
-//            put(TaskContract.TaskEntry.COLUMN_DATE, task.date)
-//            put(TaskContract.TaskEntry.COLUMN_START_TIME, task.startTime)
-//            put(TaskContract.TaskEntry.COLUMN_END_TIME, task.endTime)
-//            put(TaskContract.TaskEntry.COLUMN_CATEGORY, task.category)
-//        }
-//
-//        val newRowId = db.insert(TaskContract.TaskEntry.TABLE_NAME,
-//            null, values)
-//        db.close()
-//        Log.d("TaskInsertion", "Task inserted, newRowId: $newRowId")
-//
-//        val success = newRowId != -1L
-//        if (success) {
-//            Log.d("TaskInsertion", "Task inserted successfully with ID: $newRowId")
-//        } else {
-//            Log.e("TaskInsertion", "Failed to insert task")
-//        }
-//
-//        return newRowId != -1L
-//    }
-
 
     fun getTasksByCategory(category: String): List<Task> {
         val userId = getCurrentUserId()
@@ -288,8 +250,7 @@ fun getUserId(): Long {
                 " $userId and category: $category")
         if (userId == -1L) return emptyList()
 
-//    val userId = getCurrentUserId()
-//    if (userId != -1L) {
+
         val db = dbHelper.readableDatabase
 
         val selection = "${TaskContract.TaskEntry.COLUMN_CATEGORY} = ? AND ${TaskContract.TaskEntry.COLUMN_USER_ID} = ?"
@@ -330,15 +291,15 @@ fun getUserId(): Long {
         return tasks
     }
 
-    fun clearUserData() {
+    private fun clearUserData() {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences("user_pref", Context.MODE_PRIVATE)
         val userId = sharedPreferences.getLong("userId", -1)
 
         sharedPreferences.edit().clear().apply()
 
-        if (userId != -1L) {
-            clearUserTaskData(userId)
-        }
+//        if (userId != -1L) {
+//            clearUserTaskData(userId)
+//        }
     }
 
     private fun clearUserTaskData(userId: Long) {

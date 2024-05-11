@@ -79,7 +79,8 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                                 .background(
                                     shape =
                                     RoundedCornerShape(40.dp),
-                                    color = Color.Transparent)
+                                    color = Color.Transparent
+                                )
                                 .size(30.dp)
                         )
                         Text(
@@ -138,13 +139,14 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
             navController.navigate("notification/$exampleTaskId")
         } else {
             Log.d("home navigation", "else block of home notification")
+            navController.navigate(Screens.notification)
         }
                     }
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.notification),
                         contentDescription = "",
-                        tint = if (navNum == 2) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                        tint = if (navNum == 1) Color(0xFF020CDF) else Color(0xFFA0A4FF),
 
                         modifier = Modifier.size(30.dp)
                     )
@@ -157,7 +159,7 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                     Icon(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "",
-                        tint = if (navNum == 3) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                        tint = if (navNum == 2) Color(0xFF020CDF) else Color(0xFFA0A4FF),
                         modifier = Modifier.size(30.dp)
                     )
                 }
@@ -193,15 +195,27 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                         verticalArrangement = Arrangement.SpaceBetween,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
                         CategoryCard("Work ", R.drawable.work) {
                             navController.navigate(Screens.workCategory)
                         }
                         CategoryCard("Study ", R.drawable.university) {
                             navController.navigate(Screens.studyCategory)
                         }
+
+                        CategoryCard(category = "Home", iconResourceId = R.drawable.home_category) {
+                            navController.navigate(Screens.homeCategory)
+                        }
+
+                        CategoryCard(category = "Personal Projects",
+                            iconResourceId = R.drawable.personal) {
+                            navController.navigate(Screens.personalProjectsCategory)
+                        }
+
                         CategoryCard("Other ", R.drawable.folder) {
                             navController.navigate(Screens.otherCategory)
                         }
+
 }}} } }
 
 }

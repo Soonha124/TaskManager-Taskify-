@@ -132,19 +132,7 @@ fun signUp(
             value = "Register",
             onButtonClicked = {
                               attemptRegistration = true
-//                              if (password == confirmPassword){
-//                                  val registered = userRepository.registerUser(username, email, password)
-//                                  if (registered)
-//                                  {
-//                                      registrationSuccess = true
-//                                      userRepository.saveUserName(username)
-//                                  } else {
-//
-//                                  }
-//                              }
-//                              else {
-//
-//                              }
+
             },
             isEnabled = checkFieldsFilled(username, email, password)
 

@@ -2,6 +2,7 @@ package com.example.taskify.components
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -57,7 +59,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.taskify.R
-import com.example.taskify.database.Task
 import com.example.taskify.database.UserRepository
 
 @Composable
@@ -139,20 +140,24 @@ fun passwordMyTextFieldComponent(
         },
         trailingIcon = {
             val iconImage = if (passwordVisible.value) {
-                R.drawable.open_eyes
-            } else {
-                R.drawable.close_eye
+                R.drawable.see
             }
-            var description = if (passwordVisible.value) {
+            else
+            {
+                R.drawable.hide
+            }
+            val description = if (passwordVisible.value) {
                 "Hide password"
             } else {
                 "Show Password"
             }
-            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                Icon(modifier = Modifier.size(20.dp),
+            IconButton(onClick = {
+                passwordVisible.value = !passwordVisible.value })
+            {
+                Image(
+                    modifier = Modifier.size(30.dp),
                     painter = painterResource(id = iconImage),
                     contentDescription = description,
-                    tint = Color(0xFF6368D9)
                 )
             }
         },
@@ -167,10 +172,10 @@ fun confirmPasswordMyTextFieldComponent(
 ){
     val localFocusManager = LocalFocusManager.current
 
-    var confirmPassword = rememberSaveable {
+    val confirmPassword = rememberSaveable {
         mutableStateOf("")
     }
-    var confirmPasswordVisible = remember {
+    val confirmPasswordVisible = remember {
         mutableStateOf(false)
     }
     OutlinedTextField(
@@ -197,28 +202,34 @@ fun confirmPasswordMyTextFieldComponent(
         singleLine = true,
         maxLines = 1,
         leadingIcon = {
-            Icon(modifier = Modifier.size(20.dp),
+            Image(modifier = Modifier.size(20.dp),
                 painter = painterResource,
                 contentDescription = "",
-                tint = Color(0xFF6368D9)
+                colorFilter = ColorFilter.tint(
+                    Color(0xFF6368D9)
+                )
+
+
             )
         },
         trailingIcon = {
             val iconImage = if (confirmPasswordVisible.value) {
-                R.drawable.open_eyes
+                R.drawable.see
             } else {
-                R.drawable.close_eye
+                R.drawable.hide
             }
-            var description = if (confirmPasswordVisible.value) {
+            val description = if (confirmPasswordVisible.value) {
                 "Hide password"
             } else {
                 "Show Password"
             }
-            IconButton(onClick = { confirmPasswordVisible.value = !confirmPasswordVisible.value }) {
-                Icon(modifier = Modifier.size(20.dp),
+            IconButton(onClick = {
+                confirmPasswordVisible.value = !confirmPasswordVisible.value
+            })
+            {
+                Image(modifier = Modifier.size(30.dp),
                     painter = painterResource(id = iconImage),
                     contentDescription = description,
-                    tint = Color(0xFF6368D9)
                 )
             }
         },
@@ -344,7 +355,9 @@ fun categories(
             }
         } else {
             Column(verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.fillMaxSize())
+            {
                 Text(text = "No tasks found")
 
             }
@@ -375,8 +388,9 @@ fun CategoryCard(
         {
             Icon(painter = painterResource(id = iconResourceId),
                 contentDescription = "",
-                tint = Color(0xFFCDCFEE),
+                tint = Color.White,
                 modifier = Modifier.padding(5.dp))
+
             Text(modifier = Modifier.padding(5.dp),
                 text = category,
                 color = Color.White,
@@ -406,9 +420,10 @@ fun Tags(
     Box(contentAlignment = Alignment.Center,
         modifier = modifier
             .background(
-                shape = RoundedCornerShape(topEnd = 20.dp, bottomStart = 20.dp),
+                shape = RoundedCornerShape(topEnd = 30.dp,
+                    bottomStart = 30.dp),
                 color = if (selected) Color(0xFF6368D9)
-                else Color(0xFFCFD3FF)
+                else Color(0xFFD2D4FF)
             )
             .clickable { onTagClicked() }
             .padding(8.dp)
@@ -416,7 +431,7 @@ fun Tags(
         Text(
             text = label,
             color =  if (selected) Color.White
-            else Color(0xFF0015FD)
+            else Color(0xFF0D0E0F)
         )
         if (selected) {
             Icon(

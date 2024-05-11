@@ -37,6 +37,8 @@ object Screens {
     const val studyCategory = "studyCategory"
     const val otherCategory = "otherCategory"
     const val userAccountInfo = "userAccountInfo"
+    const val homeCategory = "homeCategory"
+    const val personalProjectsCategory = "personalProjectsCategory"
 
 
 }
@@ -47,12 +49,7 @@ fun AppNavigation(navController: NavHostController,
                   navigationViewModel: NavigationViewModel,
                   userRepository: UserRepository
                   ) {
-//    val navController = rememberNavController()
     val context = LocalContext.current
-//    val userRepository = UserRepository(
-//        context = LocalContext.current,
-//        UserDbHelper(context)
-//    )
 
 
     var lastBackPress by remember { mutableStateOf(0L) }
@@ -65,7 +62,6 @@ fun AppNavigation(navController: NavHostController,
         Screens.workCategory,
         Screens.studyCategory,
         Screens.otherCategory,
-        Screens.calender,
         Screens.homeScreen,
         Screens.splashScreen
     )
@@ -150,11 +146,6 @@ fun AppNavigation(navController: NavHostController,
             )
         }
 
-        composable(Screens.calender)
-        {
-            calender(navController = navController, userRepository)
-        }
-
         composable(Screens.profile)
         {
             profile(
@@ -162,7 +153,8 @@ fun AppNavigation(navController: NavHostController,
                 userRepository = userRepository )
         }
 
-        composable("notification/{taskId}", arguments = listOf(navArgument("taskId")
+        composable("${Screens.notification}/{taskId}",
+            arguments = listOf(navArgument("taskId")
         { type = NavType.LongType })) { backStackEntry ->
             val taskId = backStackEntry.arguments?.getLong("taskId") ?: -1L
             notification(navController = navController, userRepository = userRepository,
@@ -176,6 +168,14 @@ fun AppNavigation(navController: NavHostController,
             )
         }
 
+        composable(Screens.homeCategory){
+            homeCategory(userRepository = userRepository,
+                navController = navController)
+        }
+        composable(Screens.personalProjectsCategory){
+            personalProjectsCategory(userRepository = userRepository,
+                navController = navController)
+        }
         composable(Screens.studyCategory) {
             studyCategory(
                 navController = navController,

@@ -57,7 +57,7 @@ fun notification(
             userRepository.fetchUserTasks(userId)
     }
     val navNum by remember {
-        mutableStateOf(2)
+        mutableStateOf(1)
     }
 
     Scaffold(modifier = Modifier.padding(
@@ -87,7 +87,7 @@ fun notification(
             {
                     IconButton(
                         onClick = {
-                            navController.navigate("homeScreen")
+                            navController.navigate(Screens.homeScreen)
                         }) {
                         Icon(
                             painterResource(id = R.drawable.home),
@@ -99,7 +99,7 @@ fun notification(
                     IconButton(enabled = true,
                         onClick = {
                             if (exampleTaskId != -1L) {
-                                navController.navigate("notification/$exampleTaskId")
+                                navController.navigate("${Screens.notification}/$exampleTaskId")
                             } else {
                                 Log.d("home navigation", "else block of home notification")
                             }
@@ -107,7 +107,7 @@ fun notification(
                         Icon(
                             painter = painterResource(id = R.drawable.notification),
                             contentDescription = "",
-                            tint = if (navNum == 3) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                            tint = if (navNum == 1) Color(0xFF020CDF) else Color(0xFFA0A4FF),
                             modifier = Modifier.size(30.dp)
                         )
                     }
@@ -119,7 +119,7 @@ fun notification(
                     Icon(
                         painter = painterResource(id = R.drawable.profile),
                         contentDescription = "",
-                        tint = if (navNum == 3) Color(0xFF020CDF) else Color(0xFFA0A4FF),
+                        tint = if (navNum == 2) Color(0xFF020CDF) else Color(0xFFA0A4FF),
                         modifier = Modifier.size(30.dp)
                     )
                 }
