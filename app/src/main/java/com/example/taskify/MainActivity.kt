@@ -21,6 +21,8 @@ import com.example.taskify.ViewModel.NavigationViewModelFactory
 import com.example.taskify.database.UserDbHelper
 import com.example.taskify.database.UserRepository
 import com.example.taskify.ui.theme.TaskifyTheme
+import androidx.compose.runtime.RememberObserver
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
@@ -37,50 +39,34 @@ class MainActivity : ComponentActivity() {
             )
             val navController = rememberNavController()
 
-
             TaskifyTheme {
-//                 A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 )
                 {
-                    val destination = intent.getStringExtra("navDestination")
-                    val taskId = intent.getLongExtra("taskId", -1L)
-                    if (destination != null && taskId != -1L) {
-                        if (userRepository.isLoggedIn()) {
-                            Log.d("if condition", "checked for userLogged in")
-                            navigateToDestination(navController, destination, taskId)
-                        } else {
-                            navController.navigate(Screens.splashScreen)
+                    val isLoggedIn = userRepository.isLoggedIn()
+
+                    LaunchedEffect(key1 = isLoggedIn) {
+                        launch {
+                            if (isLoggedIn) {
+                                navController.navigate(Screens.homeScreen)
+                            } else {
+                                navController.navigate(Screens.splashScreen)
+                            }
                         }
-                    } else {
-                        AppNavigation(navController, navigationViewModel, userRepository)
+
                     }
-                }
-            }
-        }
-    }
+                        AppNavigation(navController, navigationViewModel, userRepository)
 
-    @Composable
-    private fun navigateToDestination(
-        navController: NavHostController,
-        destination: String,
-        taskId: Long,
-    ) {
-        LaunchedEffect(key1 = taskId) {
-            navController.navigate("$destination/$taskId") {
-
-                popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
                 }
-                launchSingleTop = true
-                restoreState = true
             }
         }
     }
 
 }
+
+
 
 
 

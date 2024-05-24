@@ -29,7 +29,6 @@ object Screens {
     const val loginScreen = "loginScreen"
     const val signUp = "signUp"
     const val homeScreen = "homeScreen"
-    const val calender = "calender"
     const val createTask = "createTask"
     const val profile = "profile"
     const val notification = "notification"
@@ -47,16 +46,17 @@ object Screens {
 @Composable
 fun AppNavigation(navController: NavHostController,
                   navigationViewModel: NavigationViewModel,
-                  userRepository: UserRepository
-                  ) {
+                  userRepository: UserRepository)
+{
     val context = LocalContext.current
 
-
     var lastBackPress by remember { mutableStateOf(0L) }
+
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
     var showExitDialog by remember { mutableStateOf(false) }
     val screens: List<String> = listOf(
-        Screens.createTask, Screens.profile,
+        Screens.createTask,
+        Screens.profile,
         Screens.notification,
         Screens.userAccountInfo,
         Screens.workCategory,
@@ -65,23 +65,90 @@ fun AppNavigation(navController: NavHostController,
         Screens.homeScreen,
         Screens.splashScreen
     )
-    BackHandler {
-        if (currentRoute in screens) {
-            val currentTime = System.currentTimeMillis()
-            if (currentTime - lastBackPress < 2000) {
-                showExitDialog = true
-                Log.d("back handler",
-                    "if block executed in screens list")
-            } else {
-                Toast.makeText(context, "Press back again to exit",
-                    Toast.LENGTH_SHORT).show()
-                lastBackPress = currentTime
-                Log.d("back handler", "else block executed in screens list")
-            }
+
+    BackHandler(onBack = {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastBackPress < 2000) {
+            Log.d("System Back Button", "Back Button pressed, showing dialog")
+            showExitDialog = true
         } else {
-            Log.d("back handler", "Not a critical screen")
+            Toast.makeText(context, "Press back again to exit", Toast.LENGTH_SHORT).show()
+            lastBackPress = currentTime
         }
-    }
+    })
+
+//        val currentTime = System.currentTimeMillis()
+//
+//        if (currentRoute.toString() in (Screens.signUp)
+//            && currentTime - lastBackPress < 2000 ) {
+//            showExitDialog = true
+//            Log.d("back handler",
+//                "if block executed in SignUp Screen")
+//
+//            Log.d("back handler", "Not a critical screen SignUp Screen")
+//        }
+//
+//
+//        else if(currentRoute.toString() in (Screens.loginScreen)
+//            && currentTime - lastBackPress < 2000 ) {
+//        showExitDialog = true
+//        Log.d("back handler",
+//            "if block executed in Login Screen")
+//
+//        Log.d("back handler", "Not a critical screen Login Screen")
+//    }
+//
+//        else if(currentRoute.toString() in (Screens.homeScreen)
+//            && currentTime - lastBackPress < 2000 ) {
+//                showExitDialog = true
+//                Log.d("back handler",
+//                    "if block executed in Home Screen")
+//
+//                Log.d("back handler", "Not a critical screen Home Screen")
+//            }
+//
+//        else if(currentRoute.toString() in (Screens.createTask)
+//            && currentTime - lastBackPress < 2000 ) {
+//                showExitDialog = true
+//                Log.d("back handler",
+//                    "if block executed in createTask Screen")
+//
+//            Log.d("back handler", "Not a critical screen createTask Screen")
+//        }
+//
+//        else if(currentRoute.toString() in (Screens.notification)
+//            && currentTime - lastBackPress < 2000 ) {
+//            showExitDialog = true
+//            Log.d("back handler",
+//                "if block executed in Notification Screen")
+//
+//            Log.d("back handler", "Not a critical screen Notification Screen")
+//        }
+//
+//
+//        else if(currentRoute.toString() in (Screens.profile)
+//            && currentTime - lastBackPress < 2000 ) {
+//            showExitDialog = true
+//            Log.d("back handler",
+//                "if block executed in Profile Screen")
+//
+//            Log.d("back handler", "Not a critical screen Profile Screen")
+//        }
+//
+//        else if(currentRoute.toString() in (Screens.workCategory)
+//            && currentTime - lastBackPress < 2000 ) {
+//            showExitDialog = true
+//            Log.d("back handler",
+//                "if block executed in Work Screen")
+//
+//            Log.d("back handler", "Not a critical screen Work Screen")
+//        }
+//
+//        else if(currentTime == lastBackPress)
+//        {
+//            Toast.makeText(context, "Press Again", Toast.LENGTH_SHORT).show()
+//        }
+
 
 
     if (showExitDialog) {
@@ -202,13 +269,3 @@ fun AppNavigation(navController: NavHostController,
     }
 }
 
-@Composable
-private fun shouldCloseApp(
-    navController: NavHostController,
-    viewModel: NavigationViewModel,
-): Boolean {
-    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
-    return currentRoute == Screens.homeScreen || currentRoute == Screens.splashScreen
-            || currentRoute == Screens.notification
-            || currentRoute == Screens.profile
-}

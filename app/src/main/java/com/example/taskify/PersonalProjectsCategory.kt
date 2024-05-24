@@ -36,7 +36,7 @@ fun personalProjectsCategory(userRepository: UserRepository,
         topBar = {
             TopAppBar(title = {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(108.dp,
+                    horizontalArrangement = Arrangement.spacedBy(80.dp,
                         Alignment.Start),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()

@@ -9,19 +9,3 @@ data class Task(
     val endTime: String ,
     val category: String
 )
-
-//data class User(
-//    val id: Long,
-//    val username: String,
-//    val email: String,
-//    val password: String
-//)
-//sealed class LoginResult {
-//    data class Success(val userId: Long) : LoginResult()
-//    data class Error(val reason: LoginResult.ErrorReason) : LoginResult()
-//
-//    enum class ErrorReason {
-//        EmptyFields,
-//        InvalidCredentials,
-//    }
-//}

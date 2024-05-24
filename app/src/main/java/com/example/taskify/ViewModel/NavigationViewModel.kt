@@ -8,8 +8,8 @@ import com.example.taskify.Screens
 
 class NavigationViewModel(context: Context) : ViewModel() {
     private val preferences = context.getSharedPreferences("NavigationPreferences", Context.MODE_PRIVATE)
-//this is for Observing authentication changes (live data)
-    val isLoggedIn = MutableLiveData<Boolean>()
+
+     private val isLoggedIn = MutableLiveData<Boolean>()
 
     init {
         isLoggedIn.value = checkIsLoggedIn()
@@ -17,28 +17,27 @@ class NavigationViewModel(context: Context) : ViewModel() {
     var lastScreen: String?
         get() = if (isLoggedIn.value == true) preferences.getString("LAST_SCREEN", Screens.homeScreen) else Screens.splashScreen
         set(value) {
-            if (isLoggedIn.value == true) {
+            if (isLoggedIn.value == true  && value != lastScreen) {
                 preferences.edit().putString("LAST_SCREEN", value).apply()
             }
         }
     private fun checkIsLoggedIn(): Boolean {
         return preferences.getBoolean("isLoggedIn", false)
     }
-    fun login() {
-        preferences.edit().putBoolean("isLoggedIn", true).apply()
-        isLoggedIn.value = true
-    }
-    fun logout() {
-        preferences.edit().putBoolean("isLoggedIn", false).apply()
-        isLoggedIn.value = false
-    }
-
-    // To handle the app start fresh
-    // from development mode
-    fun resetForDevelopment() {
-        preferences.edit().clear().apply()
-        isLoggedIn.value = false
-    }
+//    fun login() {
+//        preferences.edit().putBoolean("isLoggedIn", true).apply()
+//        isLoggedIn.value = true
+//    }
+//    fun logout() {
+//        preferences.edit().putBoolean("isLoggedIn", false).apply()
+//        isLoggedIn.value = false
+//    }
+//
+//
+//    fun resetForDevelopment() {
+//        preferences.edit().clear().apply()
+//        isLoggedIn.value = false
+//    }
 }
 
 class NavigationViewModelFactory(private val context: Context) : ViewModelProvider.Factory {

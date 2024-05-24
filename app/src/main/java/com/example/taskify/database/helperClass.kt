@@ -9,7 +9,8 @@ import android.provider.BaseColumns
 class UserDbHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
     null, DATABASE_VERSION) {
     @SuppressLint("SuspiciousIndentation")
-    override fun onCreate(db: SQLiteDatabase) {
+    override fun onCreate(db: SQLiteDatabase)
+    {
         val User_ENTRIES = "CREATE TABLE ${UserContract.UserEntry.TABLE_NAME} (" +
                 "${UserContract.UserEntry.USER_ID} INTEGER PRIMARY KEY AUTOINCREMENT,"+
                 "${UserContract.UserEntry.COLUMN_USERNAME} TEXT," +
@@ -39,10 +40,9 @@ class UserDbHelper(context: Context): SQLiteOpenHelper(context, DATABASE_NAME,
         const val DATABASE_NAME = "Tasks.db"
     }
 
-
 }
 
-object UserContract{
+object UserContract {
     object UserEntry : BaseColumns{
         const val TABLE_NAME = "users"
         const val USER_ID  = BaseColumns._ID

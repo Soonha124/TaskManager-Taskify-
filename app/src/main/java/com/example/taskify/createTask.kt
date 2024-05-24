@@ -2,6 +2,7 @@ package com.example.taskify
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.DatePickerDialog
 import android.app.Notification
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -75,12 +77,10 @@ class TaskAlarm : BroadcastReceiver() {
         val description = intent.getStringExtra("NOTIFICATION_CONTENT")
         val taskId = intent.getLongExtra("taskId", -1)
         try {
-            if (description != null) {
-                if (title != null) {
+            if (description != null && title != null) {
                     showNotification(
                         context, title, description, taskId
                     )
-                }
             }
         }
         catch (
@@ -89,24 +89,24 @@ class TaskAlarm : BroadcastReceiver() {
             Log.d("Receive Ex", "onReceive: ${ex.printStackTrace()}")
         }
     }
-
-
-
 }
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
 private fun showNotification(context: Context, title: String, desc: String, taskId: Long) {
-    val intent = Intent(context, MainActivity::class.java).apply {
+//    MainActivity::class.java
+    val intent = Intent(context, MainActivity::class.java ).apply {
         putExtra("navDestination", Screens.notification)
         putExtra("taskId", taskId)
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     }
 
-    val pendingIntent = PendingIntent.getActivity(context, taskId.toInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+    val pendingIntent = PendingIntent.getActivity(context, taskId.toInt(), intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
     val channelId = "message_channel"
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val channel = NotificationChannel(channelId, "message_name", NotificationManager.IMPORTANCE_DEFAULT)
+        val channel = NotificationChannel(channelId, "message_name",
+            NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
@@ -125,6 +125,11 @@ private fun showNotification(context: Context, title: String, desc: String, task
             Manifest.permission.POST_NOTIFICATIONS
         ) != PackageManager.PERMISSION_GRANTED
     ) {
+//        ActivityCompat.requestPermissions(
+//            (context as Activity),
+//            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+//            2
+//        )
         // TODO: Consider calling
         //    ActivityCompat#requestPermissions
         // here to request the missing permissions, and then overriding
@@ -133,8 +138,10 @@ private fun showNotification(context: Context, title: String, desc: String, task
         // to handle the case where the user grants the permission. See the documentation
         // for ActivityCompat#requestPermissions for more details.
         return
+
     }
     NotificationManagerCompat.from(context).notify(taskId.toInt(), notification)
+
 }
 
 
@@ -186,7 +193,6 @@ fun createTask(navController: NavController, userRepository: UserRepository
         mutableStateOf("")
     }
     val context = LocalContext.current
-//    val calendar = Calendar.getInstance()
 
     var date  by remember {
         mutableStateOf("")
@@ -202,12 +208,11 @@ fun createTask(navController: NavController, userRepository: UserRepository
     Scaffold(modifier = Modifier.padding(
         top = 10.dp,
         bottom = 10.dp),
-
         topBar = {
             TopAppBar(
                 title = {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(108.dp),
+                        horizontalArrangement = Arrangement.spacedBy(100.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -222,7 +227,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                                 })
                         )
                         Text(
-                            text = "Create task",
+                            text = "Create Task",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight(700),
@@ -319,7 +324,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(20.dp)
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
             )
             {
                 Row(
@@ -350,7 +355,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                     )
 
                     Text(
-                        text = "Start Time : ",
+                        text = "Start : ",
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(500),
@@ -383,11 +388,11 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             border = BorderStroke(1.dp, Color.Gray),
                             shape = RoundedCornerShape(2.dp)
                         )
-                        .clickable(onClick = {
+                        .clickable {
                             showTimePicker(context, calendarForEndTime) {
                                 endTime = formatTime(calendarForEndTime)
                             }
-                        })
+                        }
                 )
                 {
                     Icon(
@@ -399,7 +404,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             .padding(start = 10.dp)
                     )
                     Text(
-                        text = "End Time:",
+                        text = "End : ",
                         style = TextStyle(
                             fontSize = 12.sp,
                             fontWeight = FontWeight(500),
@@ -534,18 +539,6 @@ fun createTask(navController: NavController, userRepository: UserRepository
             )
             {
 
-//                IconButton(
-//                    colors = IconButtonDefaults.iconButtonColors(
-//                        Color(0xFF9C27B0)),
-//
-//                    onClick = { /*TODO*/ }) {
-//                    Icon(
-//                        Icons.Default.Delete,
-//                        contentDescription = "delete",
-//                        tint = Color.White,
-//                        modifier = Modifier.size(24.dp)
-//                    )}
-//                Spacer(modifier = Modifier.width(10.dp))
                 ElevatedButton(
                     shape = RoundedCornerShape(topEnd = 30.dp,
                         bottomStart = 30.dp),
@@ -553,11 +546,13 @@ fun createTask(navController: NavController, userRepository: UserRepository
                         contentColor = Color.White,
                         containerColor = Color(0xFF6368D9)
                     ),
-
                     onClick =
                     {
                         if(validateDateTime(calendarForStartTime, calendarForEndTime)){
-                            if (selectedCategory.isNotBlank()) {
+                            if (selectedCategory.isNotEmpty() && title.isNotEmpty()
+                                && date.isNotEmpty() && startTime.isNotEmpty()
+                                && endTime.isNotEmpty()
+                                && description.isNotEmpty()) {
                                 userRepository.insertTask(
                                     task = Task(
                                         id = null,
@@ -569,21 +564,26 @@ fun createTask(navController: NavController, userRepository: UserRepository
                                         description = description
                                     ), userId = userId
                                 )
-                                scheduleNotification(context, title,
-                                    "Do your Task: $description",
-                                    calendarForStartTime,1)
+                                scheduleNotification(
+                                    context = context,
+                                    title = title,
+                                    content = "Do your Task: $description",
+                                    calendar = calendarForStartTime,
+                                    requestCode = 1)
 
-                                scheduleNotification(context, title,
-                                    "Hurry Up: $description", calendarForEndTime,2)
+                                scheduleNotification(
+                                    context = context,
+                                    title = title,
+                                    content ="Hurry Up: $description",
+                                    calendar = calendarForEndTime,
+                                    requestCode = 2)
 
                                 Toast.makeText(context, "Task Saved", Toast.LENGTH_SHORT).show()
                                 navController.popBackStack()
-
-
                             }
                             else
                             {
-                                Toast.makeText(context, "Please select a category",
+                                Toast.makeText(context, "All fields are required",
                                     Toast.LENGTH_SHORT).show()
                             }
 
@@ -594,7 +594,13 @@ fun createTask(navController: NavController, userRepository: UserRepository
                         }
                     }
                 ){
-                    Text(text = "Save task")
+                    Text(text = "Save",
+                        style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight(500),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.28.sp,
+                    ))
                 }
             }}}
 
@@ -602,20 +608,21 @@ fun createTask(navController: NavController, userRepository: UserRepository
 
 
 private fun formatDate(calendar: Calendar): String {
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-    val month = calendar.get(Calendar.MONTH) + 1
-    val year = calendar.get(Calendar.YEAR)
-    return "$day/$month/$year"
+    val dateFormat = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+    return dateFormat.format(calendar.time)
+//    val day = calendar.get(Calendar.DAY_OF_MONTH)
+//    val month = calendar.get(Calendar.MONTH) + 1
+//    val year = calendar.get(Calendar.YEAR)
+//    return "$day/$month/$year"
 }
 
 private fun formatTime(calendar: Calendar): String {
-    val hour = calendar.get(Calendar.HOUR_OF_DAY)
-    val minute = calendar.get(Calendar.MINUTE)
-    return "$hour:$minute"
+    val timeFormat = java.text.SimpleDateFormat("hh:mm a", java.util.Locale.getDefault())
+    return timeFormat.format(calendar.time)
 }
 
 private fun validateDateTime(startCalendar: Calendar, endCalendar: Calendar): Boolean {
-    return startCalendar.before(endCalendar)
+    return startCalendar.before(endCalendar) && startCalendar.timeInMillis != endCalendar.timeInMillis
 }
 
 @SuppressLint("ScheduleExactAlarm")

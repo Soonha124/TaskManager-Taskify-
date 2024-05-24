@@ -37,32 +37,34 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun splashScreen(navController: NavController) {
     val alphaAnim = remember { Animatable(0f) }
     val infiniteTransition = rememberInfiniteTransition("infinite transition")
 
-    val textRepeat = 10
+    val textRepeat = 3
 
     val scale by infiniteTransition.animateFloat(
         initialValue = 0.8f,
         targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween
-            (1000,
-            easing = LinearEasing
-        ),
-            RepeatMode.Reverse),
-        label = "Zoom Animation")
-
-    LaunchedEffect(key1 = true ){
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+    LaunchedEffect(key1 = true) {
         alphaAnim.animateTo(
-            targetValue = 1f,
+            targetValue = 2f,
             animationSpec = tween(durationMillis = 3000)
         )
-        delay(4000)
-        navController.popBackStack()
-        navController.navigate(Screens.signUp)
+        launch {
+            delay(3000)
+            navController.popBackStack()
+            navController.navigate(Screens.signUp)
+        }
+
     }
     Box(
         modifier = Modifier
@@ -73,10 +75,8 @@ fun splashScreen(navController: NavController) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier
-                .padding(all = 20.dp)
-        )
-        {
+            modifier = Modifier.padding(all = 20.dp)
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.splash),
                 contentDescription = "Diary",
@@ -94,41 +94,17 @@ fun splashScreen(navController: NavController) {
                 )
             )
             Spacer(modifier = Modifier.height(20.dp))
-//            ElevatedButton(
-//                elevation = ButtonDefaults.elevatedButtonElevation(
-//                    defaultElevation = 5.dp, pressedElevation = 20.dp
-//                ),
-//                shape = RoundedCornerShape(
-//                    topStart = 20.dp,
-//                    bottomEnd = 20.dp
-//                ),
-//                colors = ButtonDefaults.buttonColors(
-//                    Color(0xFF6368D9),
-//                ),
-//                onClick = {
-//                    navController.navigate(Screens.signUp)
-//                },
-//                content = {
-//
-//                    Icon(
-//                        modifier = Modifier.size(24.dp),
-//                        painter = painterResource(id = R.drawable.vector),
-//                        contentDescription = "",
-//                        tint = Color.White,
-//                    )
-//                }
-//            )
         }
 
         repeat(textRepeat)
         {
-            Text(text = "Taskify",
-                color = Color(0xFFC254CE).copy(alpha = alphaAnim.value)
-                ,fontSize = 34.sp,
+            Text(
+                text = "Taskify",
+                color = Color(0xFFC254CE).copy(alpha = alphaAnim.value.coerceIn(0f,1f)),
+                fontSize = 34.sp,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 100.dp)
-                    .alpha(alphaAnim.value)
                     .graphicsLayer {
                         scaleX = scale
                         scaleY = scale
@@ -142,7 +118,6 @@ fun splashScreen(navController: NavController) {
         }
 
     }
-
 }
 
 

@@ -2,13 +2,18 @@ package com.example.taskify.components
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,18 +36,26 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -58,13 +71,17 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.example.taskify.R
+import com.example.taskify.database.Task
 import com.example.taskify.database.UserRepository
+import kotlinx.coroutines.launch
 
 @Composable
 fun MyTextFieldComponent(
     labelValue:String, painterResource: Painter,
     onTextSelected: (String) -> Unit,
+    modifier: Modifier
 ){
     val textValue = rememberSaveable {
         mutableStateOf("")
@@ -80,7 +97,6 @@ fun MyTextFieldComponent(
         onValueChange = {
             textValue.value = it
             onTextSelected(it)
-//            loginViewModel.onEvent(UIEvents.UserNameChange(it))
         },
         singleLine = true,
         maxLines = 1,
@@ -144,7 +160,7 @@ fun passwordMyTextFieldComponent(
             }
             else
             {
-                R.drawable.hide
+                R.drawable.manhide
             }
             val description = if (passwordVisible.value) {
                 "Hide password"
@@ -216,7 +232,7 @@ fun confirmPasswordMyTextFieldComponent(
             val iconImage = if (confirmPasswordVisible.value) {
                 R.drawable.see
             } else {
-                R.drawable.hide
+                R.drawable.manhide
             }
             val description = if (confirmPasswordVisible.value) {
                 "Hide password"
@@ -244,7 +260,7 @@ fun ButtonComponent(value: String,
     Button(
         modifier = Modifier.width(261.dp),
         colors = ButtonDefaults.buttonColors(
-            Color(0xFF6368D9)
+            if(isEnabled) Color(0xFF6368D9) else Color(0xFFF75675)
         ),
         onClick = {
             onButtonClicked.invoke()
@@ -253,13 +269,13 @@ fun ButtonComponent(value: String,
     )
     {
         Text(
-            text = "Register",
+            text = value,
             style = TextStyle(
                 fontSize = 16.sp,
                 fontWeight = FontWeight(600),
                 textAlign = TextAlign.Center,
                 letterSpacing = 0.32.sp,
-                color = Color.White
+                color = if(isEnabled) Color.White else Color.Black
             )
         )
     }
@@ -274,7 +290,7 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
 
     val annotatedString = buildAnnotatedString {
         append(initialText)
-        withStyle(style = SpanStyle(color = Color(0xFF6368D9))) {
+        withStyle(style = SpanStyle(color = Color(0xFF484FFD))) {
             pushStringAnnotation(
                 tag = loginText,
                 annotation = loginText
@@ -284,7 +300,7 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
     }
 
     ClickableText(style = TextStyle(
-        fontSize = 11.sp,
+        fontSize = 15.sp,
         fontWeight = FontWeight(400),
         color = Color(0xFF9C98A1),
         textAlign = TextAlign.Center,
@@ -304,17 +320,24 @@ fun ClickableLoginTextComponent(tryingToLogin:Boolean = true,
             }
         })
 }
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun categories(
     userRepository: UserRepository,
     category:String
 )
 {
-    val tasks = userRepository.getTasksByCategory(category)
+    var tasks = userRepository.getTasksByCategory(category)
+
+    var showDialog by remember { mutableStateOf(false) }
+    var taskToDelete by remember { mutableStateOf<Task?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier) {
+
         if (tasks.isNotEmpty()) {
             LazyColumn {
                 items(tasks) { task ->
@@ -324,11 +347,23 @@ fun categories(
                             Color(0xFF6368D9)
                         ),
                         modifier = Modifier
+                            .combinedClickable(
+                                onClick = {
+                                    Toast
+                                        .makeText(
+                                            context,
+                                            "Double click to delete",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                        .show()
+                                },
+                                onDoubleClick = {
+                                    taskToDelete = task
+                                    showDialog = true
+                                })
                             .fillMaxWidth()
                             .padding(10.dp),
-                        onClick = {
-//                            onClick(task)
-                        })
+                        )
                     {
                         Column(horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(5.dp,
@@ -354,17 +389,70 @@ fun categories(
                 }
             }
         } else {
-            Column(verticalArrangement = Arrangement.Center,
+            Column(verticalArrangement = Arrangement.spacedBy(20.dp).also
+            {
+                Alignment.CenterVertically
+            },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize())
             {
+                Image(painter = painterResource(id = R.drawable.no_task),
+                    contentDescription = "",
+                    Modifier.size(50.dp))
                 Text(text = "No tasks found")
 
             }
         }
+
+        if (showDialog) {
+            DeleteConfirmationDialog(
+                onDismiss = { showDialog = false },
+                onConfirm = {
+                    taskToDelete?.let {
+                        coroutineScope.launch {
+                            val success = it.id?.let { it1 -> userRepository.deleteTask(it1) }
+                            if (success == true) {
+                                tasks = userRepository.getTasksByCategory(category)
+                            }
+                        }
+                    }
+                    showDialog = false
+                }
+            )
+        }
+
+
     }
 }
 
+@Composable
+fun DeleteConfirmationDialog(onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = Color.White,
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text("Delete Task", fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text("Are you sure you want to delete this task?")
+                Spacer(modifier = Modifier.height(24.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextButton(onClick = onConfirm) {
+                        Text("Delete", color = Color.Red)
+                    }
+                }
+            }
+        }
+    }
+}
 @Composable
 fun CategoryCard(
     category: String, iconResourceId: Int,
@@ -376,7 +464,7 @@ fun CategoryCard(
             .fillMaxWidth()
             .height(100.dp)
             .padding(8.dp),
-        shape = RoundedCornerShape(topEnd = 30.dp, bottomStart = 30.dp) ) {
+        shape = RoundedCornerShape(topEnd = 40.dp, bottomStart = 40.dp) ) {
         Row(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
@@ -420,8 +508,10 @@ fun Tags(
     Box(contentAlignment = Alignment.Center,
         modifier = modifier
             .background(
-                shape = RoundedCornerShape(topEnd = 30.dp,
-                    bottomStart = 30.dp),
+                shape = RoundedCornerShape(
+                    topEnd = 30.dp,
+                    bottomStart = 30.dp
+                ),
                 color = if (selected) Color(0xFF6368D9)
                 else Color(0xFFD2D4FF)
             )

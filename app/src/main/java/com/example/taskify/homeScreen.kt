@@ -74,7 +74,7 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                         Icon(painter = painterResource(
                             id =R.drawable.userprofile ) ,
                             contentDescription ="" ,
-                            tint = Color(0xFF6368D9)
+                            tint = Color(0xFFF77B29)
                             , modifier = Modifier
                                 .background(
                                     shape =
@@ -98,13 +98,14 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
         },
         floatingActionButton = {
             FloatingActionButton(
+                shape = RoundedCornerShape(topEnd = 30.dp,
+                    bottomStart = 30.dp),
                 elevation = FloatingActionButtonDefaults.elevation(
                     10.dp
                 ),
-                containerColor = Color(0xFF673AB7),
+                containerColor = Color(0xFFF77B29),
                 contentColor = Color.White,
                 onClick = {
-//                    navController.navigate("createTask/-1")
                     navController.navigate("${Screens.createTask}?userId = $userId" )
                 }) {
                 Icon(
@@ -113,6 +114,7 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                 )
             }
         },
+
         floatingActionButtonPosition = FabPosition.Center,
 
         bottomBar = {
@@ -168,7 +170,8 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
         }
     ) { innerPadding ->
         Column(
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(all = 20.dp)
@@ -179,23 +182,19 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight(500),
-                    color = Color(0xFF6368D9),
+                    color = Color(0xFF020CDF),
                     textAlign = TextAlign.Center,
                     letterSpacing = 0.24.sp,
                 )
             )
             LazyColumn(
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
             ) {
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.SpaceBetween,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
                         CategoryCard("Work ", R.drawable.work) {
                             navController.navigate(Screens.workCategory)
                         }
@@ -203,7 +202,7 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                             navController.navigate(Screens.studyCategory)
                         }
 
-                        CategoryCard(category = "Home", iconResourceId = R.drawable.home_category) {
+                        CategoryCard(category = "Home", iconResourceId = R.drawable.house) {
                             navController.navigate(Screens.homeCategory)
                         }
 
@@ -216,7 +215,7 @@ fun homeScreen(navController: NavController, userRepository: UserRepository)
                             navController.navigate(Screens.otherCategory)
                         }
 
-}}} } }
+                }} } }
 
 }
 

@@ -1,14 +1,19 @@
 package com.example.taskify
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.GradientDrawable
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -56,7 +62,7 @@ fun signUp(
         if (attemptRegistration && password == confirmPassword && checkFieldsFilled(username, email, password)) {
             registrationSuccess = userRepository.registerUser(username, email, password)
             if (registrationSuccess) {
-                val userId = userRepository.getCurrentUserId()  // Ensure this gets the correct user ID
+                val userId = userRepository.getCurrentUserId()
                 if (userId != -1L) {
                     navController.navigate(Screens.homeScreen)
                 } else {
@@ -67,86 +73,92 @@ fun signUp(
             attemptRegistration = false
         }
     }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    )
-    {
 
-        Text(
-            text = "Create Your\n Account",
-            style = TextStyle(
-                fontSize = 30.sp,
-                fontWeight = FontWeight(800),
-                color = Color(0xFF6368D9),
-                textAlign = TextAlign.Center,
-                letterSpacing = 0.48.sp,
-            )
-        )
-        Spacer(modifier = Modifier.height(30.dp))
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize()
         )
         {
-           MyTextFieldComponent(
-               labelValue = "UserName",
-               painterResource = painterResource(id = R.drawable.userprofile),
-               onTextSelected = {
-                                username = it
-                   checkFieldsFilled(username,email, password)
-               },
-           )
+            Image(painter = painterResource(id = R.drawable.loginimage),
+                contentDescription = "cartoon",
+                modifier = Modifier.size(200.dp)
+            )
+            Text(
+                text = "Create Your\n Account",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight(800),
+                    color = Color(0xFF6368D9),
+                    textAlign = TextAlign.Center,
+                    letterSpacing = 0.48.sp,
+                ))
 
-           MyTextFieldComponent(
-               labelValue = "Email",
-               painterResource = painterResource(id = R.drawable.emailinbox),
-               onTextSelected = {
-                email = it
-                   checkFieldsFilled(username,email, password)
+            Spacer(modifier = Modifier.height(10.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(5.dp)
+            )
+            {
+                MyTextFieldComponent(
+                    modifier = Modifier,
+                    labelValue = "UserName",
+                    painterResource = painterResource(id = R.drawable.userprofile),
+                    onTextSelected = {
+                        username = it
+                        checkFieldsFilled(username, email, password)
+                    },
+                )
 
-               },
-           )
-           passwordMyTextFieldComponent(
-               labelValue = "Password",
-               painterResource = painterResource(id = R.drawable.password) ,
-               onTextSelected = {
-                   password = it
-                   checkFieldsFilled(username,email, password)
+                MyTextFieldComponent(
+                    modifier = Modifier,
+                    labelValue = "Email",
+                    painterResource = painterResource(id = R.drawable.emailinbox),
+                    onTextSelected = {
+                        email = it
+                        checkFieldsFilled(username, email, password)
 
-               },
-           )
-           confirmPasswordMyTextFieldComponent(
-               labelValue = "Confirm Password",
-               painterResource = painterResource(id = R.drawable.password),
-               onTextSelected = {
-                                confirmPassword = it
-                   checkFieldsFilled(username,email, password)
+                    },
+                )
+                passwordMyTextFieldComponent(
+                    labelValue = "Password",
+                    painterResource = painterResource(id = R.drawable.password),
+                    onTextSelected = {
+                        password = it
+                        checkFieldsFilled(username, email, password)
 
-               },
-           )
+                    },
+                )
+                confirmPasswordMyTextFieldComponent(
+                    labelValue = "Confirm Password",
+                    painterResource = painterResource(id = R.drawable.password),
+                    onTextSelected = {
+                        confirmPassword = it
+                        checkFieldsFilled(username, email, password)
+
+                    },
+                )
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            ButtonComponent(
+                value = "Register",
+                onButtonClicked = {
+                    attemptRegistration = true
+
+                },
+                isEnabled = checkFieldsFilled(username, email, password)
+
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            ClickableLoginTextComponent(tryingToLogin = true,
+                onTextSelected = {
+                    navController.navigate(Screens.loginScreen)
+                })
+            if (registrationSuccess) {
+                navController.navigate(Screens.homeScreen)
+            }
+
         }
-        Spacer(modifier = Modifier.height(30.dp))
-        ButtonComponent(
-            value = "Register",
-            onButtonClicked = {
-                              attemptRegistration = true
-
-            },
-            isEnabled = checkFieldsFilled(username, email, password)
-
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        ClickableLoginTextComponent(tryingToLogin = true,
-            onTextSelected = {
-                navController.navigate(Screens.loginScreen)
-            })
-        if (registrationSuccess){
-            navController.navigate(Screens.homeScreen)
-        }
-
-    }
 
 }
 

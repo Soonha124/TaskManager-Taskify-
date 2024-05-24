@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 class AlarmReceiver : BroadcastReceiver() {
@@ -16,9 +18,17 @@ class AlarmReceiver : BroadcastReceiver() {
     private fun showNotification(context: Context, taskTitle: String) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationChannelId = "task_notification_channel"
+        val soundUri = Uri.parse("android.resource://${context.packageName}/raw/notification_music")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(notificationChannelId, "Task Notifications", NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(notificationChannelId,
+                "Task Notifications", NotificationManager.IMPORTANCE_HIGH)
+                .apply {
+                    description = "Channel for Task Notifications"
+                    setSound(
+                        soundUri,
+                        null)
+                }
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -28,8 +38,10 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentText("You have a task to do: $taskTitle")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setSound(soundUri)
+            .build()
 
-        notificationManager.notify(taskTitle.hashCode(), notificationBuilder.build())
+        notificationManager.notify(taskTitle.hashCode(), notificationBuilder)
     }
 
 
