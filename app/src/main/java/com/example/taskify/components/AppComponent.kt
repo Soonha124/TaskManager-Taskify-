@@ -389,17 +389,21 @@ fun categories(
                 }
             }
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(20.dp).also
-            {
-                Alignment.CenterVertically
-            },
+            Column(verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxSize())
             {
                 Image(painter = painterResource(id = R.drawable.no_task),
                     contentDescription = "",
                     Modifier.size(50.dp))
-                Text(text = "No tasks found")
+                Text(text = "No tasks found",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(700),
+                        color = Color(0xFF6368D9),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.28.sp,
+                    ))
 
             }
         }

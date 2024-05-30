@@ -53,6 +53,7 @@ android {
 
 dependencies {
 
+    implementation("androidx.appcompat:appcompat:1.6.1")
     val lifecycle_version = "2.7.0"
 
     implementation("androidx.core:core-ktx:1.12.0")
@@ -76,7 +77,6 @@ dependencies {
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
-
 
 
 }

@@ -14,6 +14,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
@@ -93,7 +95,6 @@ class TaskAlarm : BroadcastReceiver() {
 @SuppressLint("SuspiciousIndentation")
 @RequiresApi(Build.VERSION_CODES.O)
 private fun showNotification(context: Context, title: String, desc: String, taskId: Long) {
-//    MainActivity::class.java
     val intent = Intent(context, MainActivity::class.java ).apply {
         putExtra("navDestination", Screens.notification)
         putExtra("taskId", taskId)
@@ -104,9 +105,13 @@ private fun showNotification(context: Context, title: String, desc: String, task
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
     val channelId = "message_channel"
+    val soundUri = Uri.parse("android.resource://${context.packageName}/raw/notification_music")
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         val channel = NotificationChannel(channelId, "message_name",
-            NotificationManager.IMPORTANCE_DEFAULT)
+            NotificationManager.IMPORTANCE_DEFAULT).apply {
+            setSound(soundUri, Notification.AUDIO_ATTRIBUTES_DEFAULT)
+        }
         val notificationManager: NotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
@@ -117,6 +122,7 @@ private fun showNotification(context: Context, title: String, desc: String, task
         .setSmallIcon(R.drawable.notify_task)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
+        .setSound(soundUri)
         .build()
 
 
@@ -125,6 +131,7 @@ private fun showNotification(context: Context, title: String, desc: String, task
             Manifest.permission.POST_NOTIFICATIONS
         ) != PackageManager.PERMISSION_GRANTED
     ) {
+
 //        ActivityCompat.requestPermissions(
 //            (context as Activity),
 //            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
@@ -258,7 +265,7 @@ fun createTask(navController: NavController, userRepository: UserRepository
                             fontWeight = FontWeight(500),
                             color = Color(0xFF6368D9),
                             textAlign = TextAlign.Center,
-                            letterSpacing = 0.28.sp,
+                            letterSpacing = 0.28.sp
                         )
                     )
                 },
@@ -610,10 +617,6 @@ fun createTask(navController: NavController, userRepository: UserRepository
 private fun formatDate(calendar: Calendar): String {
     val dateFormat = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
     return dateFormat.format(calendar.time)
-//    val day = calendar.get(Calendar.DAY_OF_MONTH)
-//    val month = calendar.get(Calendar.MONTH) + 1
-//    val year = calendar.get(Calendar.YEAR)
-//    return "$day/$month/$year"
 }
 
 private fun formatTime(calendar: Calendar): String {

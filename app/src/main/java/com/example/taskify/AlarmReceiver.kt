@@ -2,6 +2,7 @@ package com.example.taskify
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -32,6 +33,7 @@ class AlarmReceiver : BroadcastReceiver() {
             notificationManager.createNotificationChannel(channel)
         }
 
+
         val notificationBuilder = NotificationCompat.Builder(context, notificationChannelId)
             .setSmallIcon(R.drawable.notification)
             .setContentTitle("Task Reminder")
@@ -39,6 +41,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setSound(soundUri)
+            .setAutoCancel(true)
             .build()
 
         notificationManager.notify(taskTitle.hashCode(), notificationBuilder)
