@@ -8,12 +8,13 @@
 
 ![Calender for date selection](screenshots/date.png)
 ![Profile Screen](screenshots/profile.jpg)
-![Task Notification Screen](screenshots/NotificatinScreen.jpg)
-![Category Screen](screenshots/Study Category Screen.jpg)
+![taskNotification](screenshots/taskNotification.jpg)
+![study_category_screen.jpg](screenshots/study_category_screen.jpg)
 ![Splash Screen](screenshots/splash screen.jpg)
 ![TaskCreation](screenshots/taskcreation.png)
 ![Time Selection](screenshots/time.png)
 ![userInfoScreen](screenshots/userInfoScreen.jpg)
+![delete_dialog_box](screenshots/delete_dialog_box.jpg)
 
 
 
