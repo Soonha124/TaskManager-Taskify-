@@ -13,7 +13,7 @@
 ![Splash Screen](screenshots/splash screen.jpg)
 ![TaskCreation](screenshots/taskcreation.png)
 ![Time Selection](screenshots/time.png)
-![Time Selection](screenshots/userInfoScreen.jpg)
+![userInfoScreen](screenshots/userInfoScreen.jpg)
 
 
 
