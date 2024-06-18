@@ -2,7 +2,7 @@
 
 ## Screenshots
 
-![Home Screen](screenshots/home.jpg)
+![home](screenshots/home.jpg)
 ![Login Screen](screenshots/login.jpg)
 ![SignUp Screen](screenshots/signUp.jpg)
 
