@@ -4,17 +4,19 @@
 
 ![home](screenshots/home.jpg)
 ![Login Screen](screenshots/login.jpg)
-![SignUp Screen](screenshots/signUp.jpg)
-
-![Calender for date selection](screenshots/date.png)
-![Profile Screen](screenshots/profile.jpg)
+![signUp](screenshots/signUp.jpg)
+![date](screenshots/date.png)
+![profile](screenshots/profile.jpg)
 ![taskNotification](screenshots/taskNotification.jpg)
 ![study_category_screen.jpg](screenshots/study_category_screen.jpg)
-![Splash Screen](screenshots/splash screen.jpg)
-![TaskCreation](screenshots/taskcreation.png)
-![Time Selection](screenshots/time.png)
+![taskcreation](screenshots/taskcreation.png)
+![time](screenshots/time.png)
 ![userInfoScreen](screenshots/userInfoScreen.jpg)
 ![delete_dialog_box](screenshots/delete_dialog_box.jpg)
+![splash_screen](screenshots/splash_screen.jpg)
+![study.jpg](screenshots/study.jpg)
+
+
 
 
 
