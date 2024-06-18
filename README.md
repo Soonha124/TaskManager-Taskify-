@@ -2,7 +2,7 @@
 
 ## Screenshots
 
-![home](screenshots/home.jpg)
+![home](app/src/main/res/screenshots/home.jpg)
 ![Login Screen](screenshots/login.jpg)
 ![signUp](screenshots/signUp.jpg)
 ![date](screenshots/date.png)
